@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAM-CI — Gestion Avicole</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Styles spécifiques Équipe du jour (garde ton bloc existant) -->
+  <style>
+    /* ... garde ici tout le bloc .equipe-card, .membre-card, etc. de ton fichier ... */
+     .equipe-card{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:20px}
+  .equipe-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:1.5px solid var(--green-pale)}
+  .equipe-title{font-size:15px;font-weight:700;color:var(--green-dark);display:flex;align-items:center;gap:8px}
+  .equipe-date{font-size:12px;color:var(--text3);background:var(--green-pale);padding:4px 10px;border-radius:20px;font-weight:500}
+  .equipe-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .membre-card{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:flex-start;gap:14px;transition:var(--transition);cursor:default;position:relative;overflow:hidden}
+  .membre-card::before{content:'';position:absolute;left:0;top:0;height:100%;width:4px;border-radius:0 2px 2px 0}
+  .membre-card.gerant::before{background:var(--gold)}.membre-card.livreur::before{background:#1565C0}
+  .membre-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--green-light)}
+  .membre-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;position:relative}
+  .membre-card.gerant .membre-avatar{background:var(--gold-light);color:#7c5500;border:2px solid var(--gold)}
+  .membre-card.livreur .membre-avatar{background:#E3F2FD;color:#1565C0;border:2px solid #90CAF9}
+  .membre-status-dot{position:absolute;bottom:1px;right:1px;width:11px;height:11px;border-radius:50%;border:2px solid white}
+  .membre-status-dot.online{background:var(--green);animation:pulseStatus 2s infinite}.membre-status-dot.away{background:var(--gold)}.membre-status-dot.offline{background:#B0BEC5}
+  @keyframes pulseStatus{0%,100%{box-shadow:0 0 0 0 rgba(46,125,50,0.4)}50%{box-shadow:0 0 0 4px rgba(46,125,50,0)}}
+  .membre-info{flex:1;min-width:0}.membre-nom{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .membre-role-tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;margin-top:3px;text-transform:uppercase;letter-spacing:0.5px}
+  .membre-card.gerant .membre-role-tag{background:var(--gold-light);color:#7c5500}.membre-card.livreur .membre-role-tag{background:#E3F2FD;color:#1565C0}
+  .membre-meta{font-size:11px;color:var(--text3);margin-top:5px;display:flex;align-items:center;gap:5px}
+  .membre-stats{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+  .membre-stat-val{font-size:20px;font-weight:700;color:var(--green-dark);font-family:var(--mono);line-height:1}
+  .membre-stat-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;text-align:right}
+  .membre-progress{margin-top:10px}.membre-progress-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text3);margin-bottom:4px}
+  .membre-progress-bar{height:5px;background:#E8F5E8;border-radius:3px;overflow:hidden}
+  .membre-progress-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1)}
+  .membre-card.gerant .membre-progress-fill{background:linear-gradient(90deg,var(--gold),#E65100)}
+  .membre-card.livreur .membre-progress-fill{background:linear-gradient(90deg,#64B5F6,#1565C0)}
+  .livreur-stops{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .stop-badge{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;border:1px solid}
+  .stop-badge.done{background:#D7F5D7;color:var(--green-dark);border-color:#A5D6A7}
+  .stop-badge.enroute{background:var(--gold-light);color:#7c5500;border-color:#FFE082;animation:badgePulse 1.5s infinite}
+  .stop-badge.pending{background:#F5F5F5;color:#555;border-color:#E0E0E0}
+  .equipe-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--green-pale)}
+  .equipe-summary{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:16px}
+  .equipe-summary span{display:flex;align-items:center;gap:4px;font-weight:500}.equipe-summary strong{color:var(--text)}
+  .equipe-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);background:white;cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);transition:var(--transition);font-family:var(--font)}
+  .equipe-btn:hover{background:var(--green-pale);border-color:var(--green-light);color:var(--green-dark)}
+  .emp-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(3px)}
+  .emp-modal-overlay.open{display:flex}
+  .emp-modal-box{background:white;border-radius:18px;padding:32px;width:380px;max-width:95vw;box-shadow:0 20px 50px rgba(0,0,0,0.2);animation:slideUp 0.25s ease}
+  @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .emp-modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+  .emp-modal-title{font-size:16px;font-weight:700;color:#2c3e50;display:flex;align-items:center;gap:8px}
+  .emp-modal-close{width:30px;height:30px;border-radius:50%;border:none;background:#f0f0f0;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background 0.2s}
+  .emp-modal-close:hover{background:#e0e0e0}
+  .emp-field{display:flex;flex-direction:column;gap:5px;margin-bottom:16px}
+  .emp-field label{font-size:12px;font-weight:600;color:#34495e}
+  .emp-field input,.emp-field select{padding:11px 14px;border:2px solid #f0f0f0;border-radius:10px;font-size:14px;font-family:var(--font,'Poppins',sans-serif);outline:none;transition:border-color 0.2s,box-shadow 0.2s;background:#fafafa}
+  .emp-field input:focus,.emp-field select:focus{border-color:#f39c12;box-shadow:0 0 0 3px rgba(243,156,18,0.15);background:white}
+  .emp-modal-actions{display:flex;gap:10px;margin-top:24px}
+  .emp-btn-save{flex:2;padding:13px;background:linear-gradient(135deg,#f39c12,#e67e22);color:white;border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font,'Poppins',sans-serif);transition:transform 0.2s,box-shadow 0.2s}
+  .emp-btn-save:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(230,126,34,0.4)}
+  .emp-btn-cancel{flex:1;padding:13px;background:#f0f0f0;border:none;border-radius:10px;font-size:14px;cursor:pointer;transition:background 0.2s}
+  .emp-btn-cancel:hover{background:#e0e0e0}
+  #admin-toggle-wrapper{position:absolute;bottom:18px;right:18px}
+  #admin-toggle-btn{font-size:20px;cursor:pointer;opacity:0.45;transition:opacity 0.2s,transform 0.2s}
+  #admin-toggle-btn:hover{opacity:1;transform:rotate(30deg)}
+  @media(max-width:900px){.equipe-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     MODALE — NOUVEL EMPLOYÉ
+══════════════════════════════════════════ -->
+<div class="emp-modal-overlay" id="empModalOverlay">
+  <div class="emp-modal-box">
+    <div class="emp-modal-header">
+      <div class="emp-modal-title">➕ Nouvel employé</div>
+      <button class="emp-modal-close" onclick="closeEmpModal()">×</button>
+    </div>
+    <div class="emp-field">
+      <label>Nom complet *</label>
+      <input type="text" id="emp-name" placeholder="ex : Traoré Moussa">
+    </div>
+    <div class="emp-field">
+      <label>Rôle *</label>
+      <select id="emp-role">
+        <option value="Livreur">🚚 Livreur</option>
+        <option value="Gérant de service">👑 Gérant de service</option>
+        <option value="Vendeur">💰 Vendeur</option>
+        <option value="Admin">⚙️ Admin</option>
+      </select>
+    </div>
+    <div class="emp-field">
+      <label>Email (optionnel)</label>
+      <input type="email" id="emp-email" placeholder="email@sam-ci.ci">
+    </div>
+    <div class="emp-modal-actions">
+      <button class="emp-btn-save" id="btn-save-employee">Enregistrer</button>
+      <button class="emp-btn-cancel" onclick="closeEmpModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- Zone de toasts -->
+<div class="toast-zone" id="toastZone"></div>
+
+<!-- Modale de confirmation -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirmIcon">⚠️</div>
+    <div class="confirm-title" id="confirmTitle">Confirmer</div>
+    <div class="confirm-msg" id="confirmMsg">Êtes-vous sûr ?</div>
+    <div class="confirm-btns">
+      <button class="header-btn" onclick="closeConfirm(false)">Annuler</button>
+      <button class="header-btn primary" onclick="closeConfirm(true)">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modale générique -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBox">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Titre</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="egg-icon">🐔</span>
+      <h1>SAM-CI</h1>
+      <p>Société Avicole Moderne de Côte d'Ivoire</p>
+    </div>
+
+    <div class="login-field">
+      <label>Identifiant</label>
+      <input type="email" id="loginEmail" value="admin@sam-ci.ci" placeholder="email@sam-ci.ci">
+    </div>
+
+    <div class="login-field">
+      <label>Mot de passe</label>
+      <input type="password" id="loginPwd" value="admin123" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+
+    <button class="login-btn" onclick="doLogin()">Se connecter →</button>
+
+    <div class="login-hint">
+      <strong>Démo :</strong> admin@sam-ci.ci / admin123<br>
+      Autres rôles : vendeur@sam-ci.ci — livreur@sam-ci.ci — compta@sam-ci.ci
+    </div>
+
+    <div id="admin-toggle-wrapper">
+      <div id="admin-toggle-btn" title="Gérer les employés" onclick="openEmpModal()">⚙️</div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app hidden" id="app">
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="brand-egg">🥚</div>
+      <div class="sb-brand-text">
+        <div class="name">SAM-CI</div>
+        <div class="sub">Gestion Avicole</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="sb-section">
+        <div class="sb-label">Principal</div>
+        <button class="sb-item active" data-page="dashboard" onclick="nav('dashboard',this)">
+          <!-- icône -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span>Tableau de bord</span>
+        </button>
+        <button class="sb-item" data-page="caisse" onclick="nav('caisse',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="7" width="20" height="14" rx="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+          <span>Point de Vente</span>
+        </button>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-label">Gestion</div>
+
+        <button class="sb-item" data-page="equipe" onclick="nav('equipe',this)" style="background:rgba(249,168,37,0.08);border:1px solid rgba(249,168,37,0.25)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span style="color:var(--gold);font-weight:600">Équipe du jour</span>
+        </button>
+
+        <button class="sb-item" data-page="stocks" onclick="nav('stocks',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="21 8 21 21 3 21 3 8"></polyline>
+            <rect x="1" y="3" width="22" height="5"></rect>
+            <line x1="10" y1="12" x2="14" y2="12"></line>
+          </svg>
+          <span>Stocks</span>
+          <span class="sb-badge" id="stockAlertBadge" style="display:none">!</span>
+        </button>
+
+        <button class="sb-item" data-page="ventes" onclick="nav('ventes',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+          <span>Ventes &amp; Commandes</span>
+        </button>
+
+        <button class="sb-item" data-page="clients" onclick="nav('clients',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span>Clients</span>
+        </button>
+
+        <button class="sb-item" data-page="fournisseurs" onclick="nav('fournisseurs',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="1" y="3" width="15" height="13"></rect>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+          </svg>
+          <span>Fournisseurs</span>
+        </button>
+
+        <button class="sb-item" data-page="livraisons" onclick="nav('livraisons',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12H19"></path>
+            <path d="M12 5l7 7-7 7"></path>
+          </svg>
+          <span>Livraisons</span>
+        </button>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-label">Finances</div>
+
+        <button class="sb-item" data-page="comptabilite" onclick="nav('comptabilite',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          <span>Comptabilité</span>
+        </button>
+
+        <button class="sb-item" data-page="rapports" onclick="nav('rapports',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+          <span>Rapports</span>
+        </button>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-label">Admin</div>
+        <button class="sb-item" data-page="parametres" onclick="nav('parametres',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span>Paramètres</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="sb-user">
+      <div class="sb-avatar" id="sbAvatar">AD</div>
+      <div style="flex:1;min-width:0">
+        <div class="sb-user-name" id="sbUserName">Admin</div>
+        <div class="sb-user-role" id="sbUserRole">Gérant</div>
+      </div>
+      <button class="sb-logout" onclick="doLogout()" title="Déconnexion">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="header">
+      <div class="page-title" id="pageTitle">
+        Tableau de bord <span id="pageDate"></span>
+      </div>
+
+      <div class="header-notif" onclick="showNotifs()">
+        🔔
+        <div class="notif-dot" id="notifDot"></div>
+      </div>
+
+      <button class="header-btn" onclick="exportData()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Exporter
+      </button>
+
+      <button class="header-btn primary" id="mainActionBtn" onclick="handleAction()">
+        + Nouveau
+      </button>
+    </header>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <!-- … garde ici tout le contenu dashboard existant (kpi, chart, top clients…) … -->
+         <div id="dash-alerts"></div>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-icon gold">💰</div><div class="kpi-label">CA du jour</div><div class="kpi-val" id="kpi-ca-jour">0</div><div class="kpi-change kpi-up">▲ +8.2%</div></div>
+          <div class="kpi-card"><div class="kpi-icon green">🥚</div><div class="kpi-label">Œufs vendus (jour)</div><div class="kpi-val" id="kpi-oeufs-vendus">0</div><div class="kpi-change kpi-up">▲ plateaux today</div></div>
+          <div class="kpi-card"><div class="kpi-icon green">🐓</div><div class="kpi-label">Poulets vendus (sem.)</div><div class="kpi-val" id="kpi-poulets-vendus">0</div><div class="kpi-change kpi-neutral">têtes cette semaine</div></div>
+          <div class="kpi-card"><div class="kpi-icon red">⚠️</div><div class="kpi-label">Alertes stock</div><div class="kpi-val" id="kpi-alertes">0</div><div class="kpi-change kpi-down">produits critiques</div></div>
+        </div>
+        <div class="section-2col">
+          <div class="card"><div class="card-title">📊 Ventes 7 derniers jours</div><div style="display:flex;gap:10px;margin-bottom:10px"><span class="badge b-gold">🥚 Œufs</span><span class="badge b-green">🐓 Poulets</span></div><div class="bar-chart-wrap" id="dash-chart"></div></div>
+          <div><div class="card" style="margin-bottom:16px"><div class="card-title">🥚 Niveaux de stock</div><div id="dash-gauges"></div></div><div class="card"><div class="card-title">⚡ Dernières transactions</div><div id="dash-timeline"></div></div></div>
+        </div>
+        <div class="section-2col">
+          <div class="card"><div class="card-title">🏆 Top 5 Clients</div><table class="tbl"><thead><tr><th>Client</th><th>Catégorie</th><th>CA total</th><th>Points</th></tr></thead><tbody id="dash-top-clients"></tbody></table></div>
+          <div class="card"><div class="card-title">📦 Actions rapides</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="pos-prod-card" onclick="nav('caisse',document.querySelector('[data-page=caisse]'))"><span class="pos-prod-icon">🧾</span><div class="pos-prod-name">Nouvelle vente</div></button><button class="pos-prod-card" onclick="nav('stocks',document.querySelector('[data-page=stocks]'));setTimeout(handleAction,100)"><span class="pos-prod-icon">📦</span><div class="pos-prod-name">Entrée stock</div></button><button class="pos-prod-card" onclick="nav('clients',document.querySelector('[data-page=clients]'));setTimeout(handleAction,100)"><span class="pos-prod-icon">👤</span><div class="pos-prod-name">Nouveau client</div></button><button class="pos-prod-card" onclick="nav('equipe',document.querySelector('[data-page=equipe]'))"><span class="pos-prod-icon">👥</span><div class="pos-prod-name" style="color:var(--gold)">Équipe du jour</div></button></div></div>
+        </div>
+      </div>
+
+      <!-- ÉQUIPE -->
+      <div class="page" id="page-equipe">
+        <!-- … garde ton bloc équipe du jour existant … -->
+         <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+          <div class="kpi-card"><div class="kpi-icon gold">👑</div><div class="kpi-label">Gérant de service</div><div class="kpi-val" id="kpi-gerant-nom" style="font-size:15px;font-family:var(--font);font-weight:700">—</div><div class="kpi-change kpi-up">En service</div></div>
+          <div class="kpi-card"><div class="kpi-icon blue">🚚</div><div class="kpi-label">Livreurs actifs</div><div class="kpi-val" id="kpi-livreurs-actifs">0</div><div class="kpi-change kpi-neutral">en tournée</div></div>
+          <div class="kpi-card"><div class="kpi-icon green">✅</div><div class="kpi-label">Livraisons effectuées</div><div class="kpi-val" id="kpi-equipe-livraisons">0</div><div class="kpi-change kpi-up">aujourd'hui</div></div>
+          <div class="kpi-card"><div class="kpi-icon gold">💰</div><div class="kpi-label">CA collecté</div><div class="kpi-val" id="kpi-equipe-ca" style="font-size:16px">0 FCFA</div><div class="kpi-change kpi-up">▲ aujourd'hui</div></div>
+        </div>
+        <div class="equipe-card">
+          <div class="equipe-header"><div class="equipe-title">👥 Équipe du jour</div><div style="display:flex;align-items:center;gap:10px"><div class="equipe-date" id="equipeDateLabel">—</div><button class="equipe-btn" onclick="openAffectModal()">✏️ Affecter</button><button class="equipe-btn" onclick="openEmpModal()">➕ Nouveau</button></div></div>
+          <div class="equipe-grid" id="equipeGrid"></div>
+          <div class="equipe-footer"><div class="equipe-summary"><span>🟢 <strong id="footer-online">0</strong> en ligne</span><span>🟡 <strong id="footer-away">0</strong> en déplacement</span><span>⚫ <strong id="footer-offline">0</strong> hors-ligne</span></div><button class="equipe-btn" onclick="refreshEquipe()">🔄 Actualiser</button></div>
+        </div>
+        <div class="section-2col"><div class="card"><div class="card-title">📋 Journal de service du jour</div><div id="equipe-journal"></div></div><div class="card"><div class="card-title">📊 Performance de l'équipe</div><div id="equipe-perf"></div></div></div>
+      </div>
+
+      <!-- CAISSE -->
+      <div class="page" id="page-caisse">
+        <!-- … bloc POS caisse existant … -->
+         <div class="pos-layout">
+          <div class="pos-products">
+            <div class="card" style="margin-bottom:16px"><div class="card-title">🛒 Sélectionner un produit</div><div class="pos-product-grid" id="posProductGrid"></div></div>
+            <div class="card"><div class="card-title">👤 Client (optionnel)</div><div style="display:flex;gap:10px;align-items:center"><select class="form-select" id="posClientSelect" style="flex:1" onchange="updatePosClient()"><option value="">— Vente anonyme —</option></select><div id="posClientInfo" style="font-size:12px;color:var(--text3)"></div></div></div>
+          </div>
+          <div class="pos-cart">
+            <div class="pos-cart-items"><div class="cart-item-name" style="font-size:14px;font-weight:700;color:var(--green-dark);margin-bottom:12px">🧺 Panier</div><div id="cartItems"><div class="pos-cart-empty">🥚 Sélectionnez des produits</div></div></div>
+            <div class="pos-summary">
+              <div class="pos-total-row"><span class="label">Sous-total</span><span class="val" id="subtotal">0 FCFA</span></div>
+              <div class="pos-total-row"><span class="label">Remise</span><span class="val" id="discount">0 FCFA</span></div>
+              <div class="pos-total-row grand"><span class="label">TOTAL</span><span class="val" id="grandTotal">0 FCFA</span></div>
+              <input class="pos-payment-input" id="paymentInput" type="number" placeholder="Montant reçu (FCFA)" oninput="calcMonnaie()">
+              <div class="monnaie-display" id="monnaieDisplay" style="display:none">Monnaie : <span id="monnaieVal">0</span> FCFA</div>
+              <button class="pos-validate-btn" onclick="validateSale()">✅ Valider la vente</button>
+              <button class="header-btn" style="width:100%;margin-top:8px;justify-content:center" onclick="clearCart()">🗑 Vider le panier</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STOCKS -->
+      <div class="page" id="page-stocks">
+        <!-- … bloc stocks existant … -->
+         <div id="stock-alerts-banner"></div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)"><div class="kpi-card"><div class="kpi-icon green">🥚</div><div class="kpi-label">Stock œufs total</div><div class="kpi-val" id="kpi-stock-oeufs">0</div><div class="kpi-change kpi-neutral">plateaux</div></div><div class="kpi-card"><div class="kpi-icon green">🐓</div><div class="kpi-label">Stock poulets</div><div class="kpi-val" id="kpi-stock-poulets">0</div><div class="kpi-change kpi-neutral">têtes</div></div><div class="kpi-card"><div class="kpi-icon red">⚠️</div><div class="kpi-label">Alertes critiques</div><div class="kpi-val" id="kpi-stock-alertes2">0</div><div class="kpi-change kpi-down">sous le seuil</div></div></div>
+        <div class="section-2col">
+          <div class="card"><div class="card-header"><div class="card-title">📦 Inventaire</div><div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" placeholder="Rechercher..." oninput="filterTbl('stock-tbody',this.value)"></div><select class="filter-select" onchange="filterStockCat(this.value)"><option value="">Toutes catégories</option><option>Œufs</option><option>Poulets</option><option>Accessoires</option></select></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Produit</th><th>Catégorie</th><th>Unité</th><th>Quantité</th><th>Seuil mini</th><th>Péremption</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="stock-tbody"></tbody></table></div></div>
+          <div><div class="card" style="margin-bottom:16px"><div class="card-title">📊 Niveaux visuels</div><div id="stock-gauges"></div></div><div class="card"><div class="card-title">📋 Mouvements récents</div><div id="stock-movements"></div></div></div>
+        </div>
+
+      </div>
+
+      <!-- VENTES -->
+      <div class="page" id="page-ventes">
+        <!-- … bloc ventes existant … -->
+         <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)"><div class="kpi-card"><div class="kpi-icon gold">💰</div><div class="kpi-label">CA ce mois</div><div class="kpi-val" id="kpi-ca-mois">0</div><div class="kpi-change kpi-up">▲ +12.4%</div></div><div class="kpi-card"><div class="kpi-icon green">📦</div><div class="kpi-label">Commandes en cours</div><div class="kpi-val" id="kpi-cmd-cours">0</div></div><div class="kpi-card"><div class="kpi-icon red">⏰</div><div class="kpi-label">Impayées</div><div class="kpi-val" id="kpi-impayees">0</div></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">📋 Commandes &amp; Ventes</div><div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" placeholder="Client, N°..." oninput="filterTbl('ventes-tbody',this.value)"></div><select class="filter-select" onchange="filterVentesStatut(this.value)"><option value="">Tous statuts</option><option>En cours</option><option>Préparée</option><option>Livrée</option><option>Payée</option><option>Annulée</option></select></div><div class="tabs"><button class="tab active" onclick="filterVentesType('',this)">Toutes</button><button class="tab" onclick="filterVentesType('commande',this)">Commandes</button><button class="tab" onclick="filterVentesType('vente',this)">Ventes directes</button></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>N°</th><th>Client</th><th>Produits</th><th>Montant</th><th>Date</th><th>Type</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="ventes-tbody"></tbody></table></div></div>
+      </div>
+
+      <!-- CLIENTS -->
+      <div class="page" id="page-clients">
+        <!-- … bloc clients existant … -->
+          <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)"><div class="kpi-card"><div class="kpi-icon green">👥</div><div class="kpi-label">Total clients</div><div class="kpi-val" id="kpi-clients-total">0</div></div><div class="kpi-card"><div class="kpi-icon gold">⭐</div><div class="kpi-label">Clients actifs</div><div class="kpi-val" id="kpi-clients-actifs">0</div></div><div class="kpi-card"><div class="kpi-icon blue">💳</div><div class="kpi-label">Soldes à recouvrer</div><div class="kpi-val" id="kpi-clients-creances">0</div></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">👤 Gestion des clients</div><div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" placeholder="Nom, tél..." oninput="filterTbl('clients-tbody',this.value)"></div><select class="filter-select" onchange="filterClientsType(this.value)"><option value="">Tous types</option><option>Particulier</option><option>Revendeur</option><option>Restaurant</option><option>Hôtel</option><option>Supermarché</option></select></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Client</th><th>Téléphone</th><th>Type</th><th>CA total</th><th>Points fidélité</th><th>Solde</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="clients-tbody"></tbody></table></div></div>
+     
+      </div>
+
+      <!-- FOURNISSEURS -->
+      <div class="page" id="page-fournisseurs">
+        <!-- … bloc fournisseurs existant … -->
+           <div class="card"><div class="card-header"><div class="card-title">🚛 Fournisseurs</div><div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" placeholder="Nom..." oninput="filterTbl('fourn-tbody',this.value)"></div></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Fournisseur</th><th>Contacts</th><th>Produits</th><th>Délai livraison</th><th>Commandes YTD</th><th>Note qualité</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="fourn-tbody"></tbody></table></div></div>
+     
+      </div>
+
+      <!-- LIVRAISONS -->
+      <div class="page" id="page-livraisons">
+        <!-- … bloc livraisons existant … -->
+         <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)"><div class="kpi-card"><div class="kpi-icon blue">🚚</div><div class="kpi-label">En route aujourd'hui</div><div class="kpi-val" id="kpi-liv-enroute">0</div></div><div class="kpi-card"><div class="kpi-icon green">✅</div><div class="kpi-label">Livrées aujourd'hui</div><div class="kpi-val" id="kpi-liv-ok">0</div></div><div class="kpi-card"><div class="kpi-icon red">❌</div><div class="kpi-label">Problèmes</div><div class="kpi-val" id="kpi-liv-pb">0</div></div></div>
+        <div class="section-2col"><div class="card"><div class="card-title">🗺️ Tournées du jour</div><div id="livraisons-list"></div></div><div class="card"><div class="card-title">📋 Nouvelles commandes à livrer</div><div id="livraisons-pending"></div></div></div>
+     
+      </div>
+
+      <!-- COMPTABILITÉ -->
+      <div class="page" id="page-comptabilite">
+        <!-- … bloc compta existant … -->
+         <div class="compta-summary"><div class="compta-card recette"><div class="compta-val" id="compta-recettes">0</div><div class="compta-lbl">💰 Recettes (mois)</div></div><div class="compta-card depense"><div class="compta-val" id="compta-depenses">0</div><div class="compta-lbl">💸 Dépenses (mois)</div></div><div class="compta-card benefice"><div class="compta-val" id="compta-benefice">0</div><div class="compta-lbl">📈 Bénéfice net</div></div></div>
+        <div class="section-2col">
+          <div class="card"><div class="card-header"><div class="card-title">📖 Journal des opérations</div><select class="filter-select" onchange="filterCompta(this.value)"><option value="">Toutes</option><option value="recette">Recettes</option><option value="depense">Dépenses</option></select></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Libellé</th><th>Catégorie</th><th>Type</th><th>Montant</th></tr></thead><tbody id="compta-tbody"></tbody></table></div></div>
+          <div class="card"><div class="card-title">📊 Répartition des dépenses</div><div id="compta-chart"></div><div style="margin-top:16px"><div class="card-title">🧾 TVA du mois</div><div style="font-size:24px;font-weight:700;color:var(--green-dark);font-family:var(--mono)" id="tva-val">0 FCFA</div><div style="font-size:12px;color:var(--text3)">Taux TVA applicable : 18%</div></div></div>
+        </div>
+      </div>
+
+      <!-- RAPPORTS -->
+      <div class="page" id="page-rapports">
+        <!-- … garde ton gros bloc rapports + style + script Chart.js … -->
+         
+  <!-- ── Styles spécifiques à cette page ── -->
+  <style>
+    /* ── Barre de contrôle ── */
+    .rap-toolbar {
+      display: flex; align-items: center; gap: 12px;
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px 20px;
+      box-shadow: var(--shadow); margin-bottom: 20px;
+    }
+    .rap-toolbar-title {
+      font-size: 15px; font-weight: 700; color: var(--green-dark);
+      flex: 1; display: flex; align-items: center; gap: 8px;
+    }
+    .rap-select {
+      padding: 8px 14px; border: 1.5px solid var(--border);
+      border-radius: 10px; background: var(--bg);
+      font-size: 13px; font-family: var(--font); color: var(--text2);
+      cursor: pointer; transition: var(--transition);
+    }
+    .rap-select:focus { outline: none; border-color: var(--green); }
+    .rap-export-btn {
+      display: flex; align-items: center; gap: 7px;
+      padding: 9px 16px; border-radius: 10px;
+      background: var(--green); color: white; border: none;
+      font-size: 13px; font-weight: 600; font-family: var(--font);
+      cursor: pointer; transition: var(--transition);
+    }
+    .rap-export-btn:hover {
+      background: var(--green-dark); transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(27,94,32,0.3);
+    }
+
+    /* ── KPI row ── */
+    .rap-kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 20px; }
+    .rap-kpi {
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px 20px;
+      position: relative; overflow: hidden;
+      transition: var(--transition); cursor: default;
+      animation: rapCardIn 0.4s ease both;
+    }
+    .rap-kpi:nth-child(2) { animation-delay: .07s; }
+    .rap-kpi:nth-child(3) { animation-delay: .14s; }
+    .rap-kpi:nth-child(4) { animation-delay: .21s; }
+    @keyframes rapCardIn {
+      from { opacity:0; transform:translateY(14px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .rap-kpi:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .rap-kpi-accent {
+      position: absolute; top:0; left:0;
+      width: 4px; height: 100%; border-radius: 0 2px 2px 0;
+    }
+    .rap-kpi-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; margin-bottom: 10px;
+    }
+    .rap-kpi-lbl { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; }
+    .rap-kpi-val { font-size: 24px; font-weight: 700; font-family: var(--mono); line-height: 1; color: var(--text); }
+    .rap-kpi-sub { font-size: 11px; margin-top: 6px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+    .rap-kpi-spark { position: absolute; bottom: 0; right: 0; opacity: .1; pointer-events: none; }
+
+    /* ── Grille charts ── */
+    .rap-charts-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .rap-card {
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .rap-card-title { font-size: 14px; font-weight: 700; color: var(--green-dark); margin-bottom: 2px; display: flex; align-items: center; gap: 7px; }
+    .rap-card-sub   { font-size: 11px; color: var(--text3); margin-bottom: 14px; }
+    .rap-legend { display: flex; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
+    .rap-leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text3); }
+    .rap-leg-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .rap-canvas-wrap { position: relative; width: 100%; height: 220px; }
+    .rap-canvas-wrap-sm { position: relative; width: 100%; height: 210px; }
+
+    /* ── Mini stats ── */
+    .rap-mini-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 20px; }
+    .rap-mini-card {
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+    .rap-mini-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .rap-mini-title { font-size: 13px; font-weight: 700; color: var(--green-dark); display: flex; align-items: center; gap: 6px; }
+    .rap-stat-pair { display: flex; gap: 10px; margin-bottom: 14px; }
+    .rap-stat-box { flex: 1; background: var(--bg); border-radius: 10px; padding: 12px; text-align: center; }
+    .rap-stat-val { font-size: 20px; font-weight: 700; color: var(--green-dark); font-family: var(--mono); }
+    .rap-stat-lbl { font-size: 10px; color: var(--text3); margin-top: 2px; font-weight: 500; }
+    .rap-perf-item { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .rap-perf-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+    .rap-perf-lbl { color: var(--text3); font-weight: 500; }
+    .rap-perf-val { font-weight: 700; font-family: var(--mono); font-size: 13px; color: var(--text); }
+    .rap-perf-bar { height: 6px; background: #E8F5E8; border-radius: 3px; overflow: hidden; }
+    .rap-perf-fill { height: 100%; border-radius: 3px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+
+    /* ── Table top clients ── */
+    .rap-rank { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; font-size: 11px; font-weight: 700; }
+    .rap-rank.r1 { background: #FFF3CD; color: #7c5500; border: 1.5px solid var(--gold); }
+    .rap-rank.r2 { background: #f0f0f0; color: #555; border: 1.5px solid #ccc; }
+    .rap-rank.r3 { background: #FBE9E7; color: #BF360C; border: 1.5px solid #FFAB91; }
+    .rap-rank.rn { background: var(--green-pale); color: var(--green-dark); border: 1.5px solid var(--green-light); }
+    .rap-part-bar { display: flex; align-items: center; gap: 8px; }
+    .rap-part-track { flex: 1; height: 6px; background: #E8F5E8; border-radius: 3px; overflow: hidden; }
+    .rap-part-fill { height: 100%; background: linear-gradient(90deg, var(--green-light), var(--green)); border-radius: 3px; }
+    .rap-part-pct { font-size: 11px; font-weight: 700; color: var(--green-dark); font-family: var(--mono); min-width: 32px; text-align: right; }
+
+    @media (max-width: 1100px) {
+      .rap-kpi-row   { grid-template-columns: repeat(2,1fr); }
+      .rap-charts-row { grid-template-columns: 1fr; }
+      .rap-mini-row  { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 700px) {
+      .rap-mini-row  { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <!-- ── 1. Barre de contrôle ── -->
+  <div class="rap-toolbar">
+    <div class="rap-toolbar-title">
+      📊 Rapports &amp; Analyses
+    </div>
+    <select class="rap-select" id="rapportPeriod" onchange="renderRapports()">
+      <option value="week">Cette semaine</option>
+      <option value="month" selected>Ce mois</option>
+      <option value="year">Cette année</option>
+    </select>
+    <button class="rap-export-btn" onclick="exportData()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Exporter PDF
+    </button>
+  </div>
+
+  <!-- ── 2. KPI row ── -->
+  <div class="rap-kpi-row">
+
+    <!-- CA du mois -->
+    <div class="rap-kpi">
+      <div class="rap-kpi-accent" style="background:var(--green)"></div>
+      <div class="rap-kpi-icon" style="background:var(--green-pale)">💰</div>
+      <div class="rap-kpi-lbl">CA du mois</div>
+      <div class="rap-kpi-val" id="rap-ca-mois">18 240 000</div>
+      <div class="rap-kpi-sub kpi-up">▲ +12.4% vs mois préc.</div>
+      <svg class="rap-kpi-spark" width="80" height="36" viewBox="0 0 80 36">
+        <polyline points="0,30 13,24 27,18 40,22 53,12 67,8 80,4" fill="none" stroke="var(--green)" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <!-- Œufs vendus -->
+    <div class="rap-kpi">
+      <div class="rap-kpi-accent" style="background:var(--gold)"></div>
+      <div class="rap-kpi-icon" style="background:var(--gold-light)">🥚</div>
+      <div class="rap-kpi-lbl">Œufs vendus</div>
+      <div class="rap-kpi-val" id="rap-oeufs-qty">5 840</div>
+      <div class="rap-kpi-sub kpi-neutral">plateaux ce mois</div>
+      <svg class="rap-kpi-spark" width="80" height="36" viewBox="0 0 80 36">
+        <polyline points="0,28 13,20 27,24 40,16 53,18 67,10 80,12" fill="none" stroke="var(--gold)" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <!-- Poulets vendus -->
+    <div class="rap-kpi">
+      <div class="rap-kpi-accent" style="background:#1565C0"></div>
+      <div class="rap-kpi-icon" style="background:#E3F2FD">🐓</div>
+      <div class="rap-kpi-lbl">Poulets vendus</div>
+      <div class="rap-kpi-val" id="rap-poulets-qty">3 120</div>
+      <div class="rap-kpi-sub kpi-neutral">têtes ce mois</div>
+      <svg class="rap-kpi-spark" width="80" height="36" viewBox="0 0 80 36">
+        <polyline points="0,26 13,22 27,18 40,22 53,14 67,16 80,10" fill="none" stroke="#1565C0" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <!-- Marge brute -->
+    <div class="rap-kpi">
+      <div class="rap-kpi-accent" style="background:#7B1FA2"></div>
+      <div class="rap-kpi-icon" style="background:#F3E5F5">📈</div>
+      <div class="rap-kpi-lbl">Marge brute</div>
+      <div class="rap-kpi-val" id="rap-marge-kpi">34.2%</div>
+      <div class="rap-kpi-sub kpi-up">▲ +2.1pts vs mois préc.</div>
+      <svg class="rap-kpi-spark" width="80" height="36" viewBox="0 0 80 36">
+        <polyline points="0,28 13,22 27,26 40,18 53,14 67,10 80,8" fill="none" stroke="#7B1FA2" stroke-width="2"/>
+      </svg>
+    </div>
+
+  </div>
+
+  <!-- ── 3. Graphiques ── -->
+  <div class="rap-charts-row">
+
+    <!-- Courbe CA mensuel -->
+    <div class="rap-card">
+      <div class="rap-card-title">📈 Évolution du CA — 30 jours</div>
+      <div class="rap-card-sub">Chiffre d'affaires journalier (FCFA)</div>
+      <div class="rap-legend">
+        <div class="rap-leg-item"><div class="rap-leg-dot" style="background:#2E7D32"></div>Œufs</div>
+        <div class="rap-leg-item"><div class="rap-leg-dot" style="background:#F9A825"></div>Poulets</div>
+        <div class="rap-leg-item"><div class="rap-leg-dot" style="background:#1565C0;"></div>CA total</div>
+      </div>
+      <div class="rap-canvas-wrap"><canvas id="rap-line-chart"></canvas></div>
+    </div>
+
+    <!-- Donut répartition -->
+    <div class="rap-card">
+      <div class="rap-card-title">🥧 Répartition des ventes</div>
+      <div class="rap-card-sub">Par catégorie de produit</div>
+      <div class="rap-canvas-wrap-sm"><canvas id="rap-donut-chart"></canvas></div>
+    </div>
+
+  </div>
+
+  <!-- ── 4. Mini cards (Œufs / Poulets / Performance) ── -->
+  <div class="rap-mini-row">
+
+    <!-- Œufs -->
+    <div class="rap-mini-card">
+      <div class="rap-mini-head">
+        <div class="rap-mini-title">🥚 Ventes Œufs</div>
+        <span class="badge b-gold" style="font-size:10px">Ce mois</span>
+      </div>
+      <div class="rap-stat-pair">
+        <div class="rap-stat-box">
+          <div class="rap-stat-val" id="rap-oeufs-qty-2">5 840</div>
+          <div class="rap-stat-lbl">Plateaux vendus</div>
+        </div>
+        <div class="rap-stat-box">
+          <div class="rap-stat-val" id="rap-oeufs-ca">10.5M</div>
+          <div class="rap-stat-lbl">CA (FCFA)</div>
+        </div>
+      </div>
+      <div style="position:relative;width:100%;height:80px"><canvas id="rap-bar-oeufs"></canvas></div>
+    </div>
+
+    <!-- Poulets -->
+    <div class="rap-mini-card">
+      <div class="rap-mini-head">
+        <div class="rap-mini-title">🐓 Ventes Poulets</div>
+        <span class="badge b-green" style="font-size:10px">Ce mois</span>
+      </div>
+      <div class="rap-stat-pair">
+        <div class="rap-stat-box">
+          <div class="rap-stat-val" id="rap-poulets-qty-2">3 120</div>
+          <div class="rap-stat-lbl">Têtes vendues</div>
+        </div>
+        <div class="rap-stat-box">
+          <div class="rap-stat-val" id="rap-poulets-ca">7.7M</div>
+          <div class="rap-stat-lbl">CA (FCFA)</div>
+        </div>
+      </div>
+      <div style="position:relative;width:100%;height:80px"><canvas id="rap-bar-poulets"></canvas></div>
+    </div>
+
+    <!-- Performance -->
+    <div class="rap-mini-card">
+      <div class="rap-mini-head">
+        <div class="rap-mini-title">📊 Performance</div>
+        <span class="badge b-green" style="font-size:10px">Indicateurs</span>
+      </div>
+      <div class="rap-perf-item">
+        <div class="rap-perf-row">
+          <span class="rap-perf-lbl">Marge brute</span>
+          <span class="rap-perf-val" id="rap-marge" style="color:var(--green)">34.2%</span>
+        </div>
+        <div class="rap-perf-bar"><div class="rap-perf-fill" style="width:34.2%;background:linear-gradient(90deg,var(--green-light),var(--green))"></div></div>
+      </div>
+      <div class="rap-perf-item">
+        <div class="rap-perf-row">
+          <span class="rap-perf-lbl">Taux de perte</span>
+          <span class="rap-perf-val" id="rap-perte" style="color:var(--red)">3.8%</span>
+        </div>
+        <div class="rap-perf-bar"><div class="rap-perf-fill" style="width:3.8%;background:linear-gradient(90deg,#EF5350,var(--red))"></div></div>
+      </div>
+      <div class="rap-perf-item">
+        <div class="rap-perf-row">
+          <span class="rap-perf-lbl">Panier moyen</span>
+          <span class="rap-perf-val" id="rap-panier">87 500 FCFA</span>
+        </div>
+        <div class="rap-perf-bar"><div class="rap-perf-fill" style="width:58%;background:linear-gradient(90deg,#64B5F6,#1565C0)"></div></div>
+      </div>
+      <div class="rap-perf-item">
+        <div class="rap-perf-row">
+          <span class="rap-perf-lbl">Taux livraison OK</span>
+          <span class="rap-perf-val" style="color:var(--green)">94.5%</span>
+        </div>
+        <div class="rap-perf-bar"><div class="rap-perf-fill" style="width:94.5%;background:linear-gradient(90deg,var(--green-light),var(--green))"></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 5. Tableau top clients ── -->
+  <div class="rap-card">
+    <div class="rap-card-title">🏆 Top clients par CA</div>
+    <div class="rap-card-sub">Classement sur la période sélectionnée</div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Client</th>
+            <th>Type</th>
+            <th>Œufs (plateaux)</th>
+            <th>Poulets (têtes)</th>
+            <th>CA total</th>
+            <th>Part du CA</th>
+          </tr>
+        </thead>
+        <tbody id="rap-top-clients">
+          <!-- Rempli par renderRapports() dans app.js -->
+          <!-- Données de démonstration statiques ci-dessous -->
+          <tr>
+            <td><span class="rap-rank r1">1</span></td>
+            <td><strong>Kouassi Supermarché</strong><br><span style="font-size:10px;color:var(--text3)">Abidjan Plateau</span></td>
+            <td><span class="badge b-blue">Supermarché</span></td>
+            <td><span style="font-family:var(--mono);font-weight:700">820</span></td>
+            <td><span style="font-family:var(--mono);font-weight:700">480</span></td>
+            <td><strong style="font-family:var(--mono);color:var(--green-dark)">3 240 000</strong></td>
+            <td>
+              <div class="rap-part-bar">
+                <div class="rap-part-track"><div class="rap-part-fill" style="width:100%"></div></div>
+                <span class="rap-part-pct">17.8%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rap-rank r2">2</span></td>
+            <td><strong>Hôtel Ivoire</strong><br><span style="font-size:10px;color:var(--text3)">Cocody</span></td>
+            <td><span class="badge b-purple">Hôtel</span></td>
+            <td><span style="font-family:var(--mono);font-weight:700">640</span></td>
+            <td><span style="font-family:var(--mono);font-weight:700">310</span></td>
+            <td><strong style="font-family:var(--mono);color:var(--green-dark)">2 580 000</strong></td>
+            <td>
+              <div class="rap-part-bar">
+                <div class="rap-part-track"><div class="rap-part-fill" style="width:80%"></div></div>
+                <span class="rap-part-pct">14.2%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rap-rank r3">3</span></td>
+            <td><strong>Restaurant Le Port</strong><br><span style="font-size:10px;color:var(--text3)">Treichville</span></td>
+            <td><span class="badge b-gold">Restaurant</span></td>
+            <td><span style="font-family:var(--mono);font-weight:700">510</span></td>
+            <td><span style="font-family:var(--mono);font-weight:700">260</span></td>
+            <td><strong style="font-family:var(--mono);color:var(--green-dark)">1 960 000</strong></td>
+            <td>
+              <div class="rap-part-bar">
+                <div class="rap-part-track"><div class="rap-part-fill" style="width:62%"></div></div>
+                <span class="rap-part-pct">10.8%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rap-rank rn">4</span></td>
+            <td><strong>Marché Adjamé</strong><br><span style="font-size:10px;color:var(--text3)">Adjamé</span></td>
+            <td><span class="badge b-green">Revendeur</span></td>
+            <td><span style="font-family:var(--mono);font-weight:700">420</span></td>
+            <td><span style="font-family:var(--mono);font-weight:700">180</span></td>
+            <td><strong style="font-family:var(--mono);color:var(--green-dark)">1 440 000</strong></td>
+            <td>
+              <div class="rap-part-bar">
+                <div class="rap-part-track"><div class="rap-part-fill" style="width:47%"></div></div>
+                <span class="rap-part-pct">7.9%</span>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rap-rank rn">5</span></td>
+            <td><strong>Maquis Chez Tonton</strong><br><span style="font-size:10px;color:var(--text3)">Yopougon</span></td>
+            <td><span class="badge b-gold">Restaurant</span></td>
+            <td><span style="font-family:var(--mono);font-weight:700">310</span></td>
+            <td><span style="font-family:var(--mono);font-weight:700">140</span></td>
+            <td><strong style="font-family:var(--mono);color:var(--green-dark)">1 020 000</strong></td>
+            <td>
+              <div class="rap-part-bar">
+                <div class="rap-part-track"><div class="rap-part-fill" style="width:33%"></div></div>
+                <span class="rap-part-pct">5.6%</span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Scripts Chart.js pour cette page ── -->
+  <script>
+  /* Initialise les graphiques quand la page rapports est affichée.
+     Appelé aussi par renderRapports() dans app.js si elle existe. */
+  (function initRapportCharts() {
+
+    /* Évite de recréer si déjà initialisé */
+    if (window._rapChartsReady) return;
+
+    /* Attendre que Chart.js soit chargé */
+    if (typeof Chart === 'undefined') {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js';
+      s.onload = buildCharts;
+      document.head.appendChild(s);
+    } else {
+      buildCharts();
+    }
+
+    function buildCharts() {
+      const textCol = 'rgba(122,155,120,0.7)';
+      const gridCol = 'rgba(215,236,215,0.6)';
+
+      /* ── Courbe 30 jours ── */
+      const days30 = Array.from({length:30},(_,i)=>{
+        const d = new Date(); d.setDate(d.getDate()-29+i);
+        return d.getDate()+'/'+(d.getMonth()+1);
+      });
+      const oeufsData   = days30.map(()=>Math.round(250000+Math.random()*300000));
+      const pouletsData = days30.map(()=>Math.round(150000+Math.random()*200000));
+      const totalData   = oeufsData.map((v,i)=>v+pouletsData[i]);
+
+      const ctxLine = document.getElementById('rap-line-chart');
+      if (ctxLine) {
+        new Chart(ctxLine, {
+          type: 'line',
+          data: {
+            labels: days30,
+            datasets: [
+              { label:'Œufs',    data:oeufsData,   borderColor:'#2E7D32', backgroundColor:'rgba(46,125,50,0.07)',  borderWidth:2, pointRadius:2, pointHoverRadius:5, fill:true,  tension:0.4 },
+              { label:'Poulets', data:pouletsData, borderColor:'#F9A825', backgroundColor:'rgba(249,168,37,0.05)', borderWidth:2, pointRadius:2, pointHoverRadius:5, fill:true,  tension:0.4 },
+              { label:'Total',   data:totalData,   borderColor:'#1565C0', backgroundColor:'transparent',           borderWidth:2.5, pointRadius:0, borderDash:[5,4],  fill:false, tension:0.4 }
+            ]
+          },
+          options: {
+            responsive:true, maintainAspectRatio:false,
+            plugins: {
+              legend: { display:false },
+              tooltip: { callbacks: { label: c => ' '+c.dataset.label+': '+c.parsed.y.toLocaleString('fr-FR')+' FCFA' } }
+            },
+            scales: {
+              x: { grid:{color:gridCol}, ticks:{color:textCol, font:{size:10}, maxTicksLimit:10, autoSkip:true} },
+              y: { grid:{color:gridCol}, ticks:{color:textCol, font:{size:10}, callback:v=>(v/1000).toFixed(0)+'k'} }
+            }
+          }
+        });
+      }
+
+      /* ── Donut ── */
+      const ctxDonut = document.getElementById('rap-donut-chart');
+      if (ctxDonut) {
+        new Chart(ctxDonut, {
+          type:'doughnut',
+          data:{
+            labels:['Œufs','Poulets chair','Poulets fermiers','Accessoires'],
+            datasets:[{ data:[52,28,14,6], backgroundColor:['#2E7D32','#F9A825','#1565C0','#9C27B0'], borderWidth:0, hoverOffset:6 }]
+          },
+          options:{
+            responsive:true, maintainAspectRatio:false, cutout:'68%',
+            plugins:{
+              legend:{ position:'bottom', labels:{color:textCol, font:{size:11}, boxWidth:10, padding:12, usePointStyle:true} },
+              tooltip:{ callbacks:{ label:c=>' '+c.label+': '+c.parsed+'%' } }
+            }
+          }
+        });
+      }
+
+      /* ── Bar Œufs (sparkbar hebdo) ── */
+      const ctxOeufs = document.getElementById('rap-bar-oeufs');
+      if (ctxOeufs) {
+        new Chart(ctxOeufs, {
+          type:'bar',
+          data:{
+            labels:['S1','S2','S3','S4'],
+            datasets:[{ data:[1340,1520,1410,1570], backgroundColor:['rgba(249,168,37,0.5)','rgba(249,168,37,0.65)','rgba(249,168,37,0.5)','rgba(249,168,37,0.85)'], borderRadius:4, borderSkipped:false }]
+          },
+          options:{
+            responsive:true, maintainAspectRatio:false,
+            plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:c=>c.parsed.y+' plateaux' } } },
+            scales:{
+              x:{ grid:{display:false}, ticks:{color:textCol, font:{size:10}} },
+              y:{ display:false }
+            }
+          }
+        });
+      }
+
+      /* ── Bar Poulets (sparkbar hebdo) ── */
+      const ctxPoulets = document.getElementById('rap-bar-poulets');
+      if (ctxPoulets) {
+        new Chart(ctxPoulets, {
+          type:'bar',
+          data:{
+            labels:['S1','S2','S3','S4'],
+            datasets:[{ data:[720,810,740,850], backgroundColor:['rgba(46,125,50,0.45)','rgba(46,125,50,0.6)','rgba(46,125,50,0.45)','rgba(46,125,50,0.85)'], borderRadius:4, borderSkipped:false }]
+          },
+          options:{
+            responsive:true, maintainAspectRatio:false,
+            plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:c=>c.parsed.y+' têtes' } } },
+            scales:{
+              x:{ grid:{display:false}, ticks:{color:textCol, font:{size:10}} },
+              y:{ display:false }
+            }
+          }
+        });
+      }
+
+      window._rapChartsReady = true;
+    }
+  })();
+  </script>
+
+      </div>
+
+      <!-- PARAMÈTRES -->
+      <div class="page" id="page-parametres">
+        <div class="section-2col">
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title">🏢 Informations entreprise</div>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">Nom</label>
+                  <input class="form-input" id="set-nom" value="SAM-CI">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">RC</label>
+                  <input class="form-input" id="set-rc" value="CI-ABJ-2020-0001">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Téléphone</label>
+                  <input class="form-input" id="set-tel" value="+225 07 00 00 00 00">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Email</label>
+                  <input class="form-input" id="set-email" value="contact@sam-ci.ci">
+                </div>
+                <div class="form-group full">
+                  <label class="form-label">Adresse</label>
+                  <input class="form-input" id="set-addr" value="Abidjan, Côte d'Ivoire">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Seuil alerte œufs (plateaux)</label>
+                  <input class="form-input" id="set-seuil-oeufs" type="number" value="500">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Seuil alerte poulets (têtes)</label>
+                  <input class="form-input" id="set-seuil-poulets" type="number" value="200">
+                </div>
+              </div>
+              <div style="margin-top:16px;text-align:right">
+                <button class="header-btn primary" onclick="saveSettings()">Enregistrer</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">👥 Utilisateurs</div>
+              <div class="tbl-wrap">
+                <table class="tbl">
+                  <thead>
+                    <tr>
+                      <th>Nom</th>
+                      <th>Email</th>
+                      <th>Rôle</th>
+                      <th>Statut</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="users-tbody"></tbody>
+                </table>
+              </div>
+              <div style="margin-bottom:16px;text-align:right">
+                <button class="header-btn primary" onclick="addNewClient()">+ Ajouter Client</button>
+                <button class="header-btn" onclick="addNewProduct()">+ Ajouter Produit</button>
+                <button class="header-btn" onclick="addNewSale()">+ Ajouter Vente</button>
+                <button class="header-btn" onclick="addNewSupplier()">+ Ajouter Fournisseur</button>
+                <button class="header-btn" onclick="addNewDelivery()">+ Ajouter Livraison</button>
+                <button class="header-btn" onclick="addNewAccountingEntry()">+ Ajouter Opération Compta</button>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title">💰 Tarification</div>
+              <div id="prices-list"></div>
+              <button class="header-btn primary" style="margin-top:12px" onclick="savePrices()">Enregistrer les prix</button>
+            </div>
+            <div class="card">
+              <div class="card-title">🔔 Notifications</div>
+              <div id="notif-settings"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+
+<!-- UI global (non module) -->
+<script src="js/ui.js"></script>
+
+<!-- Logique métier (module) -->
+<script type="module" src="app.js"></script>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDTSsajA7ClPXnYBERAeTD8ZVNSgrlil-w",
+    authDomain: "samci-avicole.firebaseapp.com",
+    projectId: "samci-avicole",
+    storageBucket: "samci-avicole.firebasestorage.app",   
+   messagingSenderId: "453007633274",
+    appId: "1:453007633274:web:2c2812f95854c3c0c9c4c3",
+    measurementId: "G-1JY3JHD1T7"
+  }; 
+
+  // Initialisation Firebase globale
+  window.firebaseApp = initializeApp(firebaseConfig);
+  window.db = getFirestore(window.firebaseApp);
+  window.auth = getAuth(window.firebaseApp);
+  window.analytics = getAnalytics(window.firebaseApp);
+  
+  console.log('✅ Firebase initialisé avec succès');
+</script>
+
+<!-- Scripts principaux -->
+  <script type="module" src="app.js"></script>
+  <script type="module" src="js/ui.js"></script>
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/ai-analytics.js"></script>
+  <script type="module" src="js/reports.js"></script>
+  <script src="js/report-functions.js"></script>
+  <script type="module" src="mobile-app.js"></script>
+  <script src="notifications.js"></script>
+
+<!-- Script modal employé (utilise addEmployee, showToast, refreshEquipe déjà exposés) -->
+<script>
+  function openEmpModal() {
+    document.getElementById('empModalOverlay').classList.add('open');
+  }
+  function closeEmpModal() {
+    document.getElementById('empModalOverlay').classList.remove('open');
+  }
+</script>
+
+
+</body>
+</html>
