@@ -1039,6 +1039,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (typeof initializeMobileApp === 'function') {
       initializeMobileApp();
     }
+    
+    // Initialiser l'optimiseur de performance
+    if (window.performanceOptimizer) {
+      console.log('⚡ Optimiseur de performance activé');
+    }
+    
+    // Initialiser l'auto-updater
+    if (window.autoUpdater) {
+      console.log('🔄 Auto-updater activé');
+    }
+    
   } catch (e) {
     console.warn('⚠️ Firebase non disponible, données locales utilisées:', e.message);
   } finally {
@@ -1056,4 +1067,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('  📱 Application mobile native');
   console.log('  🔔 Notifications push');
   console.log('  📈 Prédictions avancées');
+  console.log('  ⚡ Optimisation performance');
+  console.log('  🔄 Mises à jour automatiques');
 });

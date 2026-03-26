@@ -8,17 +8,21 @@ export class SalesPredictor {
   constructor(historicalData = []) {
     this.historicalData = historicalData;
     this.seasonalFactors = {
-      'Jan': 0.8, 'Fev': 0.7, 'Mar': 0.9, 'Avr': 1.0,
-      'Mai': 1.1, 'Jui': 1.2, 'Jul': 1.3,
-      'Aou': 1.2, 'Sep': 1.0, 'Oct': 0.9,
-      'Nov': 0.8, 'Dec': 1.4
+      week: [1.0, 0.9, 0.8, 0.7, 0.9, 1.2, 1.5], // Lundi à Dimanche
+      month: [0.8, 0.85, 0.9, 1.0, 1.1, 1.2, 1.3, 1.25, 1.1, 1.0, 0.9, 0.85], // Jan à Déc
+      weather: { sunny: 1.2, rainy: 0.8, cloudy: 1.0 }
     };
+    this.modelAccuracy = 0.85;
   }
 
-  // Prédire les ventes des 7 prochains jours
+  // Prédire les ventes des 7 prochains jours avec modèle amélioré
   predictNext7Days(productCategory) {
     const recentSales = this.getRecentSales(productCategory, 30);
     const avgDaily = recentSales.reduce((sum, sale) => sum + sale.montant, 0) / recentSales.length;
+    
+    // Analyse de tendance avancée
+    const trend = this.calculateTrend(recentSales);
+    const volatility = this.calculateVolatility(recentSales);
     
     const predictions = [];
     const today = new Date();
@@ -27,22 +31,80 @@ export class SalesPredictor {
       const futureDate = new Date(today);
       futureDate.setDate(today.getDate() + i);
       
-      const monthName = futureDate.toLocaleDateString('fr-FR', { month: 'short' });
-      const seasonalFactor = this.seasonalFactors[monthName] || 1.0;
-      const trendFactor = 1 + (i * 0.02); // Légère croissance tendancielle
+      // Facteurs saisonniers améliorés
+      const dayOfWeek = futureDate.getDay();
+      const month = futureDate.getMonth();
+      const seasonalFactor = this.seasonalFactors.week[dayOfWeek] * this.seasonalFactors.month[month];
       
-      const predictedSales = avgDaily * seasonalFactor * trendFactor;
-      const confidence = Math.max(0.7, 1 - (i * 0.05)); // Confiance décroissante
+      // Prédiction avec tendance et volatilité
+      let predicted = avgDaily * seasonalFactor * (1 + trend * i) * (1 + (Math.random() - 0.5) * volatility);
+      
+      // Ajustement basé sur les événements spéciaux
+      predicted = this.adjustForSpecialEvents(futureDate, predicted);
       
       predictions.push({
         date: futureDate.toISOString().split('T')[0],
-        predicted: Math.round(predictedSales),
-        confidence: Math.round(confidence * 100),
-        category: productCategory
+        predicted: Math.round(predicted),
+        confidence: this.calculateConfidence(i, recentSales.length),
+        trend: trend > 0 ? 'hausse' : trend < 0 ? 'baisse' : 'stable',
+        risk: this.assessRisk(volatility)
       });
     }
     
     return predictions;
+  }
+  
+  // Calculer la tendance des ventes
+  calculateTrend(sales) {
+    if (sales.length < 2) return 0;
+    
+    const firstHalf = sales.slice(0, Math.floor(sales.length / 2));
+    const secondHalf = sales.slice(Math.floor(sales.length / 2));
+    
+    const firstAvg = firstHalf.reduce((sum, sale) => sum + sale.montant, 0) / firstHalf.length;
+    const secondAvg = secondHalf.reduce((sum, sale) => sum + sale.montant, 0) / secondHalf.length;
+    
+    return (secondAvg - firstAvg) / firstAvg;
+  }
+  
+  // Calculer la volatilité
+  calculateVolatility(sales) {
+    if (sales.length < 2) return 0.1;
+    
+    const avg = sales.reduce((sum, sale) => sum + sale.montant, 0) / sales.length;
+    const variance = sales.reduce((sum, sale) => sum + Math.pow(sale.montant - avg, 2), 0) / sales.length;
+    return Math.sqrt(variance) / avg;
+  }
+  
+  // Ajuster pour événements spéciaux
+  adjustForSpecialEvents(date, prediction) {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    
+    // Fêtes et événements en Côte d'Ivoire
+    const specialEvents = {
+      '12-25': 1.5, // Noël
+      '1-1': 1.3,   // Nouvel an
+      '8-7': 1.2,   // Fête nationale
+      '4-1': 1.1    // Fêtes de Pâques (approx)
+    };
+    
+    const eventKey = `${month}-${day}`;
+    return prediction * (specialEvents[eventKey] || 1.0);
+  }
+  
+  // Calculer la confiance de la prédiction
+  calculateConfidence(daysAhead, dataPoints) {
+    const baseConfidence = Math.min(0.95, dataPoints / 100);
+    const timeDecay = Math.exp(-daysAhead * 0.1);
+    return Math.round((baseConfidence * timeDecay * this.modelAccuracy) * 100);
+  }
+  
+  // Évaluer le risque
+  assessRisk(volatility) {
+    if (volatility < 0.1) return 'faible';
+    if (volatility < 0.3) return 'modéré';
+    return 'élevé';
   }
 
   getRecentSales(category, days = 30) {
