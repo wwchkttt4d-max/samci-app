@@ -1,13 +1,13 @@
-# 🐔 SAM-CI V4 - Application Premium de Gestion Avicole
+# 🐔 AVICO-PRO V4 - Application Premium de Gestion Avicole
 
-![SAM-CI Logo](https://img.shields.io/badge/SAM-CI-V4-blue?style=for-the-badge&logo=github)
+![AVICO-PRO Logo](https://img.shields.io/badge/AVICO-PRO-V4-blue?style=for-the-badge&logo=github)
 ![Version](https://img.shields.io/badge/version-4.0.0-green?style=for-the-badge)
 ![Note](https://img.shields.io/badge/note-10%2F10-brightgreen?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
 
 ## 🎯 **DESCRIPTION**
 
-SAM-CI V4 est une **application premium de gestion complète** pour les élevages avicoles en Côte d'Ivoire. Conçue avec une note parfaite de **10/10**, elle combine technologies modernes et intelligence artificielle pour optimiser votre productivité.
+AVICO-PRO V4 est une **application premium de gestion complète** pour les élevages avicoles en Côte d'Ivoire. Conçue avec une note parfaite de **10/10**, elle combine technologies modernes et intelligence artificielle pour optimiser votre productivité.
 
 ## ⭐ **FONCTIONNALITÉS PRINCIPALES**
 
@@ -144,9 +144,9 @@ npm start
 ## 📞 **SUPPORT & CONTACT**
 
 ### **Support technique**
-- 📧 **Email** : contact@sam-ci.ci
+- 📧 **Email** : contact@avico-pro.ci
 - 📱 **Téléphone** : +225 07 00 00 00 00
-- 🌐 **Site web** : https://sam-ci.ci
+- 🌐 **Site web** : https://avico-pro.ci
 
 ### **Documentation**
 - 📖 **Guide utilisateur** : Inclus dans l'application
@@ -172,6 +172,6 @@ Les contributions sont les bienvenues ! Veuillez consulter :
 
 ---
 
-**🐔 SAM-CI V4 - La révolution numérique de l'aviculture ivoirienne**
+**🐔 AVICO-PRO V4 - La révolution numérique de l'aviculture ivoirienne**
 
 *Fait avec ❤️ en Côte d'Ivoire pour les producteurs ivoiriens*

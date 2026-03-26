@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   SAM-CI FONCTIONS DE RAPPORTS - INTERFACE UTILISATEUR
+   AVICO-PRO FONCTIONS DE RAPPORTS - INTERFACE UTILISATEUR
    Fonctions pour générer, sauvegarder et imprimer les rapports
    ════════════════════════════════════════════════════════════════ */
 
@@ -300,4 +300,4 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-console.log('📊 Module de fonctions de rapports SAM-CI chargé');
+console.log('📊 Module de fonctions de rapports AVICO-PRO chargé');

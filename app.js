@@ -1017,12 +1017,12 @@ Object.assign(window, {
 ══════════════════════════════════════════ */
 
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('🚀 Démarrage de SAM-CI v4 - Edition Premium...');
+  console.log(' Démarrage de AVICO-PRO V4 - Edition Premium...');
   
   // Initialiser Firebase et synchroniser les données
   try {
     await syncAllData();
-    console.log('✅ Données synchronisées avec Firebase');
+    console.log(' Données synchronisées avec Firebase');
     watchStocks();
     
     // Activer la synchronisation temps réel complète
@@ -1042,16 +1042,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Initialiser l'optimiseur de performance
     if (window.performanceOptimizer) {
-      console.log('⚡ Optimiseur de performance activé');
+      console.log(' Optimiseur de performance activé');
     }
     
     // Initialiser l'auto-updater
     if (window.autoUpdater) {
-      console.log('🔄 Auto-updater activé');
+      console.log(' Auto-updater activé');
     }
     
   } catch (e) {
-    console.warn('⚠️ Firebase non disponible, données locales utilisées:', e.message);
+    console.warn(' Firebase non disponible, données locales utilisées:', e.message);
   } finally {
     // Toujours initialiser l'interface, Firebase ou non
     populatePosProducts();
@@ -1060,13 +1060,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkStockAlerts();
   }
   
-  console.log('🎉 SAM-CI v4 Premium initialisé avec succès !');
-  console.log('📊 Fonctionnalités activées:');
-  console.log('  ✅ Synchronisation temps réel');
-  console.log('  🧠 Intelligence artificielle');
-  console.log('  📱 Application mobile native');
-  console.log('  🔔 Notifications push');
-  console.log('  📈 Prédictions avancées');
-  console.log('  ⚡ Optimisation performance');
-  console.log('  🔄 Mises à jour automatiques');
+  console.log(' AVICO-PRO V4 Premium initialisé avec succès !');
+  console.log(' Fonctionnalités activées:');
+  console.log('   Synchronisation temps réel');
+  console.log('   Intelligence artificielle');
+  console.log('   Application mobile native');
+  console.log('   Notifications push');
+  console.log('   Prédictions avancées');
+  console.log('   Optimisation performance');
+  console.log('   Mises à jour automatiques');
 });

@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════
-   SAM-CI — Firebase Integration
+   AVICO-PRO — Firebase Integration
    Configuration et fonctions de synchronisation
 ══════════════════════════════════════════ */
 
@@ -152,7 +152,7 @@ export function watchStocks() {
     
     // Notification temps réel
     if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('📦 SAM-CI', {
+      new Notification('📦 AVICO-PRO', {
         body: `Stock mis à jour: ${stockData.produit}`,
         icon: '/favicon.ico'
       });

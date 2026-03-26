@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   SAM-CI RAPPORTS - GESTION DES RAPPORTS ET IMPRESSION
+   AVICO-PRO RAPPORTS - GESTION DES RAPPORTS ET IMPRESSION
    Sauvegarde et impression des rapports dans la base de données
    ════════════════════════════════════════════════════════════════ */
 
@@ -460,7 +460,7 @@ class ReportManager {
         ${this.generateChartsHTML(report.data.charts)}
 
         <div class="footer">
-          <p>SAM-CI - Système de Gestion Avicole</p>
+          <p>AVICO-PRO - Système de Gestion Avicole</p>
           <p>Rapport généré automatiquement</p>
         </div>
       </body>
@@ -657,4 +657,4 @@ window.loadReports = async () => {
   }
 };
 
-console.log('📊 Module de rapports SAM-CI chargé');
+console.log('📊 Module de rapports AVICO-PRO chargé');

@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   SAM-CI MOBILE - APPLICATION NATIVE HYBRIDE
+   AVICO-PRO MOBILE - APPLICATION NATIVE HYBRIDE
    Progressive Web App (PWA) avec capacités natives
    ════════════════════════════════════════════════════════════════ */
 
@@ -21,7 +21,7 @@ const urlsToCache = [
 
 // Installation du Service Worker
 self.addEventListener('install', event => {
-  console.log('📱 Installation SAM-CI Mobile...');
+  console.log('📱 Installation AVICO-PRO Mobile...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -33,7 +33,7 @@ self.addEventListener('install', event => {
 
 // Activation du Service Worker
 self.addEventListener('activate', event => {
-  console.log('🚀 Activation SAM-CI Mobile...');
+  console.log('🚀 Activation AVICO-PRO Mobile...');
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
@@ -74,7 +74,7 @@ self.addEventListener('fetch', event => {
       .catch(() => {
         // Mode hors ligne - retourner page offline
         return new Response(
-          '<h1>📱 SAM-CI Hors Ligne</h1><p>Vérifiez votre connexion</p>',
+          '<h1>📱 AVICO-PRO Hors Ligne</h1><p>Vérifiez votre connexion</p>',
           { status: 503, statusText: 'Service Unavailable' }
         );
       })
@@ -175,7 +175,7 @@ class NativeCapabilities {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'SAM-CI - ' + data.title,
+          title: 'AVICO-PRO - ' + data.title,
           text: data.text,
           url: data.url
         });
@@ -391,7 +391,7 @@ class MobileUI {
 
 // ─── INITIALISATION APPLICATION MOBILE ─────────────────────────────────────────
 export function initializeMobileApp() {
-  console.log('📱 Initialisation SAM-CI Mobile...');
+  console.log('📱 Initialisation AVICO-PRO Mobile...');
   
   // Vérifier si l'application est installée
   const native = new NativeCapabilities();
@@ -410,7 +410,7 @@ export function initializeMobileApp() {
   // Configurer le mode hors ligne
   setupOfflineMode();
   
-  console.log('✅ SAM-CI Mobile initialisée avec succès');
+  console.log('✅ AVICO-PRO Mobile initialisée avec succès');
 }
 
 function requestMobilePermissions() {

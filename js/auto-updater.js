@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   SAM-CI AUTO UPDATER
+   AVICO-PRO AUTO UPDATER
    Mise à jour automatique et synchronisation continue
    ════════════════════════════════════════════════════════════════ */
 

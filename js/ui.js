@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-ui.js — SAM-CI Gestion Avicole
+ui.js — AVICO-PRO Gestion Avicole
 ════════════════════════════════════════════════════════════════ */
 
 'use strict';
@@ -143,10 +143,10 @@ function checkAutoLogin() {
 
 // Utilisateurs de démonstration (mots de passe hashés)
 const DEMO_USERS = [
-  { email: 'admin@sam-ci.ci',   pwd: hashPassword('admin123'),   name: 'Administrateur',  role: 'Admin',        avatar: 'AD' },
-  { email: 'vendeur@sam-ci.ci', pwd: hashPassword('vendeur123'), name: 'Vendeur SAM',     role: 'Vendeur',      avatar: 'VE' },
-  { email: 'livreur@sam-ci.ci', pwd: hashPassword('livreur123'), name: 'Livreur SAM',     role: 'Livreur',      avatar: 'LI' },
-  { email: 'compta@sam-ci.ci',  pwd: hashPassword('compta123'),  name: 'Comptable SAM',   role: 'Comptabilité', avatar: 'CO' },
+  { email: 'admin@avico-pro.ci',   pwd: hashPassword('admin123'),   name: 'Administrateur',  role: 'Admin',        avatar: 'AD' },
+  { email: 'vendeur@avico-pro.ci', pwd: hashPassword('vendeur123'), name: 'Vendeur AVICO',     role: 'Vendeur',      avatar: 'VE' },
+  { email: 'livreur@avico-pro.ci', pwd: hashPassword('livreur123'), name: 'Livreur AVICO',     role: 'Livreur',      avatar: 'LI' },
+  { email: 'compta@avico-pro.ci',  pwd: hashPassword('compta123'),  name: 'Comptable AVICO',   role: 'Comptabilité', avatar: 'CO' },
 ];
 
 /**
@@ -1438,4 +1438,4 @@ Object.assign(window, {
 loadSettings();
 
 // Log de confirmation
-console.log('%c✅ ui.js SAM-CI chargé', 'color:#2E7D32;font-weight:700;font-size:13px');
+console.log('%c✅ ui.js AVICO-PRO chargé', 'color:#2E7D32;font-weight:700;font-size:13px');

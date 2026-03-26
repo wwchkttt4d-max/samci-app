@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   SAM-CI PERFORMANCE OPTIMIZER
+   AVICO-PRO PERFORMANCE OPTIMIZER
    Optimisation des performances et monitoring en temps réel
    ════════════════════════════════════════════════════════════════ */
 
