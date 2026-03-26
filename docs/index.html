@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAM-CI V4 - Démo en Ligne</title>
+    <meta name="description" content="SAM-CI V4 - Application Premium de Gestion Avicole avec Intelligence Artificielle">
+    <meta name="keywords" content="gestion avicole, élevage, œufs, poulets, côte d'ivoire, IA, PWA">
+    <meta name="author" content="SAM-CI">
+    
+    <!-- Open Graph pour réseaux sociaux -->
+    <meta property="og:title" content="SAM-CI V4 - Application Premium de Gestion Avicole">
+    <meta property="og:description" content="Solution complète avec IA, mobile, et synchronisation temps réel pour élevages avicoles">
+    <meta property="og:image" content="https://github.com/wwchkttt4d-max/samci-app/raw/main/samci-logo.png">
+    <meta property="og:url" content="https://wwchkttt4d-max.github.io/samci-app/">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SAM-CI V4 - Application Premium">
+    <meta name="twitter:description" content="Gestion avicole avec IA et synchronisation temps réel">
+    <meta name="twitter:image" content="https://github.com/wwchkttt4d-max/samci-app/raw/main/samci-logo.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .demo-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .demo-title {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .demo-subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin: 0;
+        }
+        
+        .demo-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-color: #3a7bd5;
+        }
+        
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .feature-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .feature-description {
+            color: #6c757d;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .demo-cta {
+            text-align: center;
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: transform 0.3s ease;
+            margin: 0 10px;
+        }
+        
+        .cta-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .cta-secondary {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+        
+        .demo-footer {
+            text-align: center;
+            padding: 30px;
+            background: #2c3e50;
+            color: white;
+        }
+        
+        .demo-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px 40px;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #00d2ff;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .demo-features {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-title {
+                font-size: 2em;
+            }
+            
+            .demo-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <div class="demo-header">
+            <h1 class="demo-title">🐔 SAM-CI V4</h1>
+            <p class="demo-subtitle">Application Premium de Gestion Avicole - Note 10/10</p>
+        </div>
+        
+        <!-- Stats -->
+        <div class="demo-stats">
+            <div class="stat-item">
+                <div class="stat-number">10/10</div>
+                <div class="stat-label">Note Qualité</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">🧠</div>
+                <div class="stat-label">Intelligence IA</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">📱</div>
+                <div class="stat-label">Application Mobile</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">⚡</div>
+                <div class="stat-label">Temps Réel</div>
+            </div>
+        </div>
+        
+        <!-- Features -->
+        <div class="demo-features">
+            <div class="feature-card">
+                <div class="feature-icon">🧠</div>
+                <h3 class="feature-title">Intelligence Artificielle</h3>
+                <p class="feature-description">
+                    Prédictions des ventes sur 7 jours, recommandations intelligentes pour stocks, 
+                    et KPIs avancés pour optimiser votre productivité.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3 class="feature-title">Application Mobile Native</h3>
+                <p class="feature-description">
+                    PWA installable sur iOS/Android avec fonctionnalités natives : 
+                    caméra pour codes-barres, GPS pour livraisons, notifications push.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">Synchronisation Temps Réel</h3>
+                <p class="feature-description">
+                    Mise à jour instantanée des données sur tous les appareils, 
+                    écouteurs Firebase pour stocks, ventes et clients.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">Rapports Avancés</h3>
+                <p class="feature-description">
+                    Génération automatique de rapports, sauvegarde dans Firebase, 
+                    export multi-formats (JSON, CSV, Excel) et impression professionnelle.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🥚</div>
+                <h3 class="feature-title">Gestion Complète</h3>
+                <p class="feature-description">
+                    Gestion des œufs, poulets, clients, fournisseurs, 
+                    comptabilité et employés dans une seule application.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🔧</div>
+                <h3 class="feature-title">Technologie Moderne</h3>
+                <p class="feature-description">
+                    Firebase Firestore, Progressive Web App, Service Workers, 
+                    et architecture modulaire scalable.
+                </p>
+            </div>
+        </div>
+        
+        <!-- CTA -->
+        <div class="demo-cta">
+            <a href="../index.html" class="cta-button">
+                <i class="fas fa-play"></i> Essayer l'Application
+            </a>
+            <a href="https://github.com/wwchkttt4d-max/samci-app" class="cta-button cta-secondary" target="_blank">
+                <i class="fab fa-github"></i> Voir le Code
+            </a>
+        </div>
+        
+        <!-- Footer -->
+        <div class="demo-footer">
+            <p>&copy; 2024 SAM-CI - Solution Premium de Gestion Avicole</p>
+            <p>Fait avec ❤️ en Côte d'Ivoire pour les producteurs ivoiriens</p>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script>
+        // Animation des nombres au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            const stats = document.querySelectorAll('.stat-number');
+            stats.forEach((stat, index) => {
+                setTimeout(() => {
+                    stat.style.opacity = '0';
+                    stat.style.transform = 'scale(0.5)';
+                    
+                    setTimeout(() => {
+                        stat.style.transition = 'all 0.5s ease';
+                        stat.style.opacity = '1';
+                        stat.style.transform = 'scale(1)';
+                    }, 100);
+                }, index * 200);
+            });
+            
+            // Animation des cartes au scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '0';
+                        entry.target.style.transform = 'translateY(30px)';
+                        
+                        setTimeout(() => {
+                            entry.target.style.transition = 'all 0.6s ease';
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, 100);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.feature-card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
