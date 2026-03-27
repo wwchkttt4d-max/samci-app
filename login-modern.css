@@ -3,14 +3,12 @@
    Animations avicoles premium avec particules et effets
 ══════════════════════════════════════════ */
 
-/* ─── Arrière-plan moderne avec animations avicoles ─────────────────────────────── */
+/* ─── Arrière-plan vidéo premium avec poulets ─────────────────────── */
 #loginPage {
   position: fixed;
   inset: 0;
   z-index: 999;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #ffa0c9 75%, #fed6e3 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
+  background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,10 +16,34 @@
   overflow: hidden;
 }
 
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+/* Conteneur vidéo */
+.video-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.video-background::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0,0,0,0.7) 0%,
+    rgba(0,0,0,0.5) 50%,
+    rgba(0,0,0,0.8) 100%
+  );
+  z-index: 2;
+}
+
+#chickenVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.9;
 }
 
 /* ─── Particules flottantes animées ─────────────────────────────── */
@@ -190,8 +212,8 @@
 /* ─── Boîte de connexion moderne ─────────────────────────────── */
 .login-box {
   background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   border-radius: 24px;
   padding: 48px;
   width: 420px;
@@ -295,8 +317,8 @@
   font-family: var(--font);
   outline: none;
   background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   color: var(--text);
   transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
 }
@@ -365,8 +387,8 @@
   font-size: 12px; 
   color: var(--text3);
   background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   padding: 12px; 
   border-radius: 12px;
   border: 1px solid rgba(255,255,255,0.2);

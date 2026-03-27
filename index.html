@@ -137,6 +137,15 @@
 
 <!-- LOGIN -->
 <div id="loginPage">
+  <!-- Arrière-plan vidéo avec poulets -->
+  <div class="video-background">
+    <video id="chickenVideo" autoplay muted loop playsinline>
+      <source src="https://www.shutterstock.com/shutterstock/videos/3679564797/preview/stock-footage-a-group-of-chickens-are-eating-near-their-coop-at-sunset-k-video-chicken-coop-free-range.webm" type="video/webm">
+      <!-- Fallback vers une vidéo locale ou alternative -->
+      <source src="assets/chickens-sunset.mp4" type="video/mp4">
+    </video>
+  </div>
+  
   <div class="login-box">
     <div class="login-logo">
       <span class="egg-icon">🐔</span>
@@ -1083,6 +1092,7 @@
 <!-- Scripts principaux -->
   <script src="js/security.js"></script>
   <script src="js/promise-handler.js"></script>
+  <script src="video-background.js"></script>
   <script src="login-diagnostic.js"></script>
   <script src="login-animations.js"></script>
   <script src="js/add-functions.js"></script>
