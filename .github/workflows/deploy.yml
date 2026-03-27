@@ -25,34 +25,56 @@ jobs:
         
     - name: Build demo
       run: |
+        echo "🔧 Construction du site pour GitHub Pages..."
+        
         # Créer le dossier de build
         mkdir -p build
         
         # Copier les fichiers principaux
+        echo "📦 Copie des fichiers HTML/CSS..."
         cp index.html build/
         cp style.css build/
         cp premium-dashboard.html build/
         cp premium-styles.css build/
+        
+        # Copier tous les fichiers JS
+        echo "📜 Copie des fichiers JavaScript..."
         cp -r js build/
-        cp -r docs build/
-        cp manifest.json build/
+        cp app.js build/
         cp notifications.js build/
         cp mobile-app.js build/
         cp firebase-diagnostic.js build/
         cp login-diagnostic.js build/
         cp mini-server.js build/
         cp test-ventes.js build/
+        
+        # Copier la documentation
+        echo "📚 Copie de la documentation..."
+        cp -r docs build/
+        cp manifest.json build/
         cp CLIENT_DEMO_INSTRUCTIONS.md build/
         cp SECURITY_REPORT.md build/
         cp README.md build/
+        cp .firebaserc build/
         
         # Copier les assets si nécessaire
         if [ -d "assets" ]; then
           cp -r assets build/
         fi
         
+        # Vérifier la structure
+        echo "📋 Structure du dossier build :"
+        ls -la build/
+        echo ""
+        echo "📂 Contenu du dossier js dans build :"
+        ls -la build/js/ || echo "Dossier js non trouvé"
+        
+        # Créer un fichier .nojekyll pour éviter les problèmes Jekyll
+        touch build/.nojekyll
+        
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build
+        force_orphan: true
