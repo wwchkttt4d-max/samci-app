@@ -181,38 +181,47 @@ function doLogin() {
   }
 
   setTimeout(() => {
-    // Cherche dans les users démo (avec vérification de hash)
-    let user = DEMO_USERS.find(u => u.email === email && verifyPassword(u.pwd, password));
+    try {
+      // Cherche dans les users démo (avec vérification de hash)
+      let user = DEMO_USERS.find(u => u.email === email && verifyPassword(u.pwd, password));
 
-    // Cherche aussi dans les employés ajoutés manuellement
-    if (!user) {
-      const employees = JSON.parse(localStorage.getItem('sam_employees') || '[]');
-      const emp = employees.find(e => e.email && e.email.toLowerCase() === email && verifyPassword(e.password, password));
-      if (emp) {
-        user = {
-          email : emp.email,
-          name  : emp.name,
-          role  : emp.role,
-          avatar: emp.name.slice(0, 2).toUpperCase(),
-        };
+      // Cherche aussi dans les employés ajoutés manuellement
+      if (!user) {
+        const employees = JSON.parse(localStorage.getItem('sam_employees') || '[]');
+        const emp = employees.find(e => e.email && e.email.toLowerCase() === email && verifyPassword(e.password, password));
+        if (emp) {
+          user = {
+            email : emp.email,
+            name  : emp.name,
+            role  : emp.role,
+            avatar: emp.name.slice(0, 2).toUpperCase(),
+          };
+        }
       }
-    }
 
-    if (btn) {
-      btn.textContent = 'Se connecter →';
-      btn.disabled = false;
-    }
+      if (btn) {
+        btn.textContent = 'Se connecter →';
+        btn.disabled = false;
+      }
 
-    if (user) {
-      localStorage.setItem('sam_session', JSON.stringify(user));
-      applyUserSession(user);
-      showToast(`✅ Bienvenue, ${user.name} !`, 'success');
-    } else {
-      shakeInput(emailEl);
-      shakeInput(pwdEl);
-      showToast('❌ Email ou mot de passe incorrect', 'error');
-      pwdEl.value = '';
-      pwdEl.focus();
+      if (user) {
+        localStorage.setItem('sam_session', JSON.stringify(user));
+        applyUserSession(user);
+        showToast(`✅ Bienvenue, ${user.name} !`, 'success');
+      } else {
+        shakeInput(emailEl);
+        shakeInput(pwdEl);
+        showToast('❌ Email ou mot de passe incorrect', 'error');
+        pwdEl.value = '';
+        pwdEl.focus();
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la connexion:', error);
+      showToast('❌ Erreur de connexion, veuillez réessayer', 'error');
+      if (btn) {
+        btn.textContent = 'Se connecter →';
+        btn.disabled = false;
+      }
     }
   }, 400);
 }
@@ -242,48 +251,123 @@ function applyUserSession(user) {
   if (typeof initApp === 'function') initApp(user);
 }
 
-/* ──────────────────────────────────────────────────────
+/* ──────────────────────────────────────────────────────────────
 4. FONCTIONS D'ENREGISTREMENT DES DONNÉES
-────────────────────────────────────────────────────── */
+────────────────────────────────────────────────────────────── */
 
-// Ajouter un nouveau produit depuis l'interface
+// Ajouter un nouveau produit depuis l'interface (sécurisé)
 function addNewProduct() {
-  const produit = prompt('Nom du produit:');
-  const categorie = prompt('Catégorie (Œufs/Poulets):');
-  const unite = prompt('Unité (Plateau 30/Tête/Kg):');
-  const qte = parseInt(prompt('Quantité en stock:'));
-  const seuil = parseInt(prompt('Seuil alerte:'));
-  const prix = parseInt(prompt('Prix de vente:'));
+  openModal('➕ Ajouter un produit', `
+    <div class="form-group">
+      <label>Nom du produit</label>
+      <input type="text" id="new-produit-nom" placeholder="Ex: Œufs de poule" required>
+    </div>
+    <div class="form-group">
+      <label>Catégorie</label>
+      <select id="new-produit-categorie">
+        <option value="Œufs">Œufs</option>
+        <option value="Poulets">Poulets</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Unité</label>
+      <select id="new-produit-unite">
+        <option value="Plateau 30">Plateau 30</option>
+        <option value="Tête">Tête</option>
+        <option value="Kg">Kg</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Quantité en stock</label>
+      <input type="number" id="new-produit-qte" min="0" required>
+    </div>
+    <div class="form-group">
+      <label>Seuil alerte</label>
+      <input type="number" id="new-produit-seuil" min="0" required>
+    </div>
+    <div class="form-group">
+      <label>Prix de vente (FCFA)</label>
+      <input type="number" id="new-produit-prix" min="0" required>
+    </div>
+  `, `
+    <button class="header-btn primary" onclick="saveNewProduct()"> Enregistrer</button>
+    <button class="header-btn" onclick="closeModal()">Annuler</button>
+  `);
+}
+
+function saveNewProduct() {
+  const produit = document.getElementById('new-produit-nom')?.value.trim();
+  const categorie = document.getElementById('new-produit-categorie')?.value;
+  const unite = document.getElementById('new-produit-unite')?.value;
+  const qte = parseInt(document.getElementById('new-produit-qte')?.value) || 0;
+  const seuil = parseInt(document.getElementById('new-produit-seuil')?.value) || 0;
+  const prix = parseInt(document.getElementById('new-produit-prix')?.value) || 0;
   
   if (!produit || !categorie || !unite || isNaN(qte) || isNaN(seuil) || isNaN(prix)) {
-    showToast('⚠️ Veuillez remplir tous les champs correctement', 'error');
+    showToast(' Veuillez remplir tous les champs correctement', 'error');
     return;
   }
   
-  const stockData = {
-    produit: sanitizeInput(produit),
-    categorie: sanitizeInput(categorie),
-    unite: sanitizeInput(unite),
+  if (qte < 0 || seuil < 0 || prix < 0) {
+    showToast(' Les valeurs doivent être positives', 'error');
+    return;
+  }
+  
+  const newProduct = {
+    id: Date.now(),
+    produit: produit,
+    categorie: categorie,
+    unite: unite,
     qte: qte,
     seuil: seuil,
+    prix: prix,
     prixDetail: prix,
-    prixGros: Math.round(prix * 0.9),
-    icone: categorie.toLowerCase().includes('œuf') ? '🥚' : '🐓'
+    prixGros: Math.floor(prix * 0.9),
+    icone: categorie === 'Œufs' ? ' ' : ' '
   };
   
-  if (typeof addStockToFirebase === 'function') {
-    addStockToFirebase(stockData);
-  } else {
-    showToast('❌ Fonction d\'enregistrement non disponible', 'error');
-  }
+  DB.stocks.push(newProduct);
+  closeModal();
+  renderStocks();
+  showToast(' Produit ajouté avec succès', 'success');
 }
 
-// Ajouter un nouveau client depuis l'interface
+// Ajouter un nouveau client depuis l'interface (sécurisé)
 function addNewClient() {
-  const nom = prompt('Nom du client:');
-  const type = prompt('Type (Restaurant/Supermarché/Hôtel/Revendeur):');
-  const tel = prompt('Téléphone:');
-  const email = prompt('Email:');
+  openModal('➕ Ajouter un client', `
+    <div class="form-group">
+      <label>Nom du client</label>
+      <input type="text" id="new-client-nom" placeholder="Nom complet / Raison sociale" required>
+    </div>
+    <div class="form-group">
+      <label>Type</label>
+      <select id="new-client-type">
+        <option value="Restaurant">Restaurant</option>
+        <option value="Supermarché">Supermarché</option>
+        <option value="Hôtel">Hôtel</option>
+        <option value="Revendeur">Revendeur</option>
+        <option value="Particulier">Particulier</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Téléphone</label>
+      <input type="tel" id="new-client-tel" placeholder="07 XX XX XX XX" required>
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="new-client-email" placeholder="email@exemple.com">
+    </div>
+  `, `
+    <button class="header-btn primary" onclick="saveNewClient()">💾 Enregistrer</button>
+    <button class="header-btn" onclick="closeModal()">Annuler</button>
+  `);
+}
+
+function saveNewClient() {
+  const nom = document.getElementById('new-client-nom')?.value.trim();
+  const type = document.getElementById('new-client-type')?.value;
+  const tel = document.getElementById('new-client-tel')?.value.trim();
+  const email = document.getElementById('new-client-email')?.value.trim();
   
   if (!nom || !type || !tel) {
     showToast('⚠️ Veuillez remplir tous les champs obligatoires', 'error');
@@ -296,6 +380,7 @@ function addNewClient() {
   }
   
   const clientData = {
+    id: Date.now(),
     nom: sanitizeInput(nom),
     type: sanitizeInput(type),
     tel: sanitizeInput(tel),
@@ -306,11 +391,27 @@ function addNewClient() {
     statut: 'Actif'
   };
   
+  // Ajouter localement
+  if (typeof DB !== 'undefined' && DB.clients) {
+    DB.clients.push(clientData);
+  }
+  
+  // Sauvegarder dans Firebase
   if (typeof addClientToFirebase === 'function') {
     addClientToFirebase(clientData);
-  } else {
-    showToast('❌ Fonction d\'enregistrement non disponible', 'error');
   }
+  
+  closeModal();
+  
+  // Rafraîchir l'interface
+  if (typeof renderClients === 'function') {
+    renderClients();
+  }
+  if (typeof populatePosClients === 'function') {
+    populatePosClients();
+  }
+  
+  showToast('✅ Client ajouté avec succès', 'success');
 }
 
 // Ajouter une nouvelle vente depuis l'interface
@@ -507,7 +608,7 @@ function nav(pageId, btn) {
   const titleEl = document.getElementById('pageTitle');
   const dateEl  = document.getElementById('pageDate');
   if (titleEl) {
-    titleEl.innerHTML = `${UI.pageTitles[pageId] || pageId} `;
+    titleEl.innerHTML = `${escapeHtml(UI.pageTitles[pageId] || pageId)} `;
     if (dateEl) titleEl.appendChild(dateEl);
   }
 
@@ -542,27 +643,35 @@ function closeSidebarMobile() {
 function handleAction() {
   switch (UI.currentPage) {
     case 'stocks':
-      if (typeof openStockModal === 'function') openStockModal();
+      if (typeof addNewProduct === 'function') addNewProduct();
+      else if (typeof openNewStock === 'function') openNewStock();
       else openGenericModal('Entrée de stock', buildStockForm());
       break;
     case 'clients':
-      if (typeof openClientModal === 'function') openClientModal();
+      if (typeof addNewClient === 'function') addNewClient();
+      else if (typeof openNewClient === 'function') openNewClient();
       else openGenericModal('Nouveau client', buildClientForm());
       break;
     case 'ventes':
-      if (typeof openVenteModal === 'function') openVenteModal();
+      if (typeof addNewSaleEntry === 'function') addNewSaleEntry();
+      else if (typeof addNewSale === 'function') addNewSale();
+      else if (typeof openNewVente === 'function') openNewVente();
       else openGenericModal('Nouvelle commande', buildVenteForm());
       break;
     case 'fournisseurs':
-      if (typeof openFournisseurModal === 'function') openFournisseurModal();
+      if (typeof addNewSupplier === 'function') addNewSupplier();
+      else if (typeof addNewSupplier === 'function') addNewSupplier();
+      else if (typeof openNewFourn === 'function') openNewFourn();
       else openGenericModal('Nouveau fournisseur', buildFournisseurForm());
       break;
     case 'livraisons':
-      if (typeof openLivraisonModal === 'function') openLivraisonModal();
+      if (typeof addNewDelivery === 'function') addNewDelivery();
+      else if (typeof openNewLivraison === 'function') openNewLivraison();
       else openGenericModal('Nouvelle tournée', buildLivraisonForm());
       break;
     case 'comptabilite':
-      if (typeof openComptaModal === 'function') openComptaModal();
+      if (typeof addNewAccountingEntry === 'function') addNewAccountingEntry();
+      else if (typeof openNewCompta === 'function') openNewCompta();
       else openGenericModal('Nouvelle opération', buildComptaForm());
       break;
     case 'equipe':
@@ -614,7 +723,7 @@ function showToast(msg, type = 'success', duration = 3500) {
     'box-shadow:0 6px 24px rgba(0,0,0,0.25);' +
     'animation:toastIn 0.3s ease;cursor:pointer;' +
     'max-inline-size:360px;word-break:break-word;';
-  toast.innerHTML = `<span style="font-size:16px">${c.icon}</span><span>${msg}</span>`;
+  toast.innerHTML = `<span style="font-size:16px">${escapeHtml(c.icon)}</span><span>${escapeHtml(msg)}</span>`;
   toast.addEventListener('click', () => removeToast(toast));
 
   zone.appendChild(toast);

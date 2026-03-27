@@ -405,7 +405,18 @@ function deleteStock(id) {
 
 function renderVentes() {
   const tbody = document.getElementById('ventes-tbody');
-  if (!tbody) return;
+  if (!tbody) {
+    console.warn('⚠️ Element ventes-tbody non trouvé');
+    return;
+  }
+  
+  console.log('📊 Rendu des ventes - Nombre de ventes:', DB.ventes?.length || 0);
+  
+  if (!DB.ventes || DB.ventes.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:20px">Aucune vente enregistrée</td></tr>';
+    return;
+  }
+  
   tbody.innerHTML = DB.ventes.slice(0, 50).map(v => `
     <tr>
       <td>${escHtml(v.num)}</td>
@@ -839,8 +850,13 @@ function validateSale() {
   };
 
   // Mise à jour locale + Firebase
-  DB.ventes.push({ ...venteData, id: Date.now() });
+  const venteId = 'local_' + Date.now(); // Marquer comme vente locale
+  DB.ventes.push({ ...venteData, id: venteId });
   addVenteToFirebase(venteData);
+  
+  // Debug: Vérifier que la vente est bien ajoutée
+  console.log('✅ Vente enregistrée:', venteData);
+  console.log('📊 Total ventes après ajout:', DB.ventes.length);
 
   // Décrémenter les stocks
   cart.forEach(l => {
@@ -1017,12 +1033,19 @@ Object.assign(window, {
 ══════════════════════════════════════════ */
 
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log(' Démarrage de AVICO-PRO V4 - Edition Premium...');
+  console.log('🚀 Démarrage de AVICO-PRO V4 - Edition Premium...');
+  
+  // Initialiser les données locales si nécessaire
+  if (!DB.ventes) DB.ventes = [];
+  if (!DB.stocks) DB.stocks = [];
+  if (!DB.clients) DB.clients = [];
+  
+  console.log('📊 Données initiales - Ventes:', DB.ventes.length, 'Stocks:', DB.stocks.length, 'Clients:', DB.clients.length);
   
   // Initialiser Firebase et synchroniser les données
   try {
     await syncAllData();
-    console.log(' Données synchronisées avec Firebase');
+    console.log('✅ Données synchronisées avec Firebase');
     watchStocks();
     
     // Activer la synchronisation temps réel complète
@@ -1042,31 +1065,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Initialiser l'optimiseur de performance
     if (window.performanceOptimizer) {
-      console.log(' Optimiseur de performance activé');
+      console.log('⚡ Optimiseur de performance activé');
     }
     
     // Initialiser l'auto-updater
     if (window.autoUpdater) {
-      console.log(' Auto-updater activé');
+      console.log('🔄 Auto-updater activé');
     }
     
   } catch (e) {
-    console.warn(' Firebase non disponible, données locales utilisées:', e.message);
+    console.warn('⚠️ Firebase non disponible, données locales utilisées:', e.message);
   } finally {
     // Toujours initialiser l'interface, Firebase ou non
     populatePosProducts();
     populatePosClients();
     renderDashboard();
+    renderVentes(); // Forcer le rendu des ventes
     checkStockAlerts();
   }
   
-  console.log(' AVICO-PRO V4 Premium initialisé avec succès !');
-  console.log(' Fonctionnalités activées:');
-  console.log('   Synchronisation temps réel');
-  console.log('   Intelligence artificielle');
-  console.log('   Application mobile native');
-  console.log('   Notifications push');
-  console.log('   Prédictions avancées');
-  console.log('   Optimisation performance');
-  console.log('   Mises à jour automatiques');
+  console.log('🎉 AVICO-PRO V4 Premium initialisé avec succès !');
+  console.log('📊 Fonctionnalités activées:');
+  console.log('  ✅ Synchronisation temps réel');
+  console.log('  🧠 Intelligence artificielle');
+  console.log('  📱 Application mobile native');
+  console.log('  🔔 Notifications push');
+  console.log('  📈 Prédictions avancées');
+  console.log('  ⚡ Optimisation performance');
+  console.log('  🔄 Mises à jour automatiques');
+  
+  // Debug: Afficher l'état final des ventes
+  console.log('📊 État final des ventes:', DB.ventes);
 });

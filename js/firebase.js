@@ -18,42 +18,65 @@ const firebaseConfig = {
   measurementId: "G-1JY3JHD1T7"
 };
 
-// Initialisation Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+// Initialiser Firebase avec gestion d'erreurs
+let app, db, auth;
+try {
+  app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  auth = getAuth(app);
+  console.log('✅ Firebase initialisé avec succès');
+} catch (error) {
+  console.error('❌ Erreur initialisation Firebase:', error);
+  // Fonctions de secours si Firebase échoue
+  window.firebaseError = true;
+}
 
 // Export des instances pour utilisation dans app.js
 export { db, auth, collection, onSnapshot, addDoc, doc, setDoc, getDoc, updateDoc, deleteDoc, query, orderBy, limit, where };
 
 // Fonctions de synchronisation
 export async function syncAllData() {
+  // Vérifier si Firebase est disponible
+  if (window.firebaseError || !db) {
+    console.warn('⚠️ Firebase non disponible, utilisation des données locales');
+    createDemoData();
+    return false;
+  }
+  
   try {
     console.log('🔄 Synchronisation avec Firebase...');
     
     // Synchroniser les stocks avec données réelles
     const stocksSnapshot = await getDocs(collection(db, 'Stocks'));
-    const firebaseStocks = stocksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const firebaseStocks = [];
+    stocksSnapshot.forEach(doc => {
+      firebaseStocks.push({ id: doc.id, ...doc.data() });
+    });
     
-    // Synchroniser les clients avec données réelles
+    // Synchroniser les ventes
+    const ventesSnapshot = await getDocs(collection(db, 'Sales'));
+    const firebaseVentes = [];
+    ventesSnapshot.forEach(doc => {
+      firebaseVentes.push({ id: doc.id, ...doc.data() });
+    });
+    
+    // Synchroniser les clients
     const clientsSnapshot = await getDocs(collection(db, 'Clients'));
-    const firebaseClients = clientsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const firebaseClients = [];
+    clientsSnapshot.forEach(doc => {
+      firebaseClients.push({ id: doc.id, ...doc.data() });
+    });
     
-    // Synchroniser les ventes avec données réelles
-    const ventesSnapshot = await getDocs(collection(db, 'Ventes'));
-    const firebaseVentes = ventesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
-    // Mettre à jour la base locale DB si elle existe
+    // Mettre à jour la base locale
     if (typeof window !== 'undefined' && window.DB) {
       window.DB.stocks = firebaseStocks.length > 0 ? firebaseStocks : window.DB.stocks;
-      window.DB.clients = firebaseClients.length > 0 ? firebaseClients : window.DB.clients;
       window.DB.ventes = firebaseVentes.length > 0 ? firebaseVentes : window.DB.ventes;
+      window.DB.clients = firebaseClients.length > 0 ? firebaseClients : window.DB.clients;
       
-      console.log('✅ Données synchronisées:', {
-        stocks: firebaseStocks.length,
-        clients: firebaseClients.length,
-        ventes: firebaseVentes.length
-      });
+      console.log('📊 Données synchronisées:');
+      console.log('  - Stocks:', window.DB.stocks.length);
+      console.log('  - Ventes:', window.DB.ventes.length);
+      console.log('  - Clients:', window.DB.clients.length);
     }
     
     return true;
@@ -108,75 +131,121 @@ function createDemoData() {
 }
 
 export function watchStocks() {
+  // Vérifier si Firebase est disponible
+  if (window.firebaseError || !db) {
+    console.warn('⚠️ Firebase non disponible, surveillance stocks désactivée');
+    return Promise.resolve(); // ✅ Retourner une Promise résolue
+  }
+  
   const stocksCollection = collection(db, 'Stocks');
   
-  onSnapshot(stocksCollection, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      const stockData = { id: change.doc.id, ...change.doc.data() };
-      
-      if (change.type === 'added') {
-        console.log('📦 Nouveau stock ajouté:', stockData);
-        // Ajouter à la base locale si elle existe
-        if (typeof window !== 'undefined' && window.DB && window.DB.stocks) {
-          const existingIndex = window.DB.stocks.findIndex(s => s.id === change.doc.id);
-          if (existingIndex === -1) {
-            window.DB.stocks.push(stockData);
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onSnapshot(stocksCollection, 
+      (snapshot) => {
+        try {
+          let lastUpdatedStock = null;
+          
+          snapshot.docChanges().forEach((change) => {
+            const stockData = { id: change.doc.id, ...change.doc.data() };
+            lastUpdatedStock = stockData;
+            
+            if (change.type === 'added') {
+              console.log('📦 Nouveau stock ajouté:', stockData);
+              if (typeof window !== 'undefined' && window.DB && window.DB.stocks) {
+                const existingIndex = window.DB.stocks.findIndex(s => s.id === change.doc.id);
+                if (existingIndex === -1) {
+                  window.DB.stocks.push(stockData);
+                }
+              }
+            }
+            
+            if (change.type === 'modified') {
+              console.log('📝 Stock modifié:', stockData);
+              if (typeof window !== 'undefined' && window.DB && window.DB.stocks) {
+                const existingIndex = window.DB.stocks.findIndex(s => s.id === change.doc.id);
+                if (existingIndex !== -1) {
+                  window.DB.stocks[existingIndex] = stockData;
+                }
+              }
+            }
+            
+            if (change.type === 'removed') {
+              console.log('🗑️ Stock supprimé:', stockData);
+              if (typeof window !== 'undefined' && window.DB && window.DB.stocks) {
+                window.DB.stocks = window.DB.stocks.filter(s => s.id !== change.doc.id);
+              }
+            }
+          });
+          
+          // Mettre à jour l'interface
+          if (typeof renderStocks === 'function') renderStocks();
+          if (typeof populatePosProducts === 'function') populatePosProducts();
+          if (typeof renderDashboard === 'function') renderDashboard();
+          
+          // Notification
+          if ('Notification' in window && Notification.permission === 'granted' && lastUpdatedStock) {
+            new Notification('📦 AVICO-PRO', {
+              body: `Stock mis à jour: ${lastUpdatedStock.produit}`,
+              icon: '/favicon.ico'
+            });
           }
+          
+          resolve(); // ✅ Succès
+        } catch (error) {
+          console.error('❌ Erreur dans watchStocks:', error);
+          reject(error); // ❌ Erreur
         }
+      },
+      (error) => {
+        console.error('❌ Erreur Firebase watchStocks:', error);
+        reject(new Error(`Firebase surveillance stocks: ${error.message || error}`)); // ❌ Erreur Firebase
       }
-      
-      if (change.type === 'modified') {
-        console.log('📝 Stock modifié:', stockData);
-        // Mettre à jour la base locale
-        if (typeof window !== 'undefined' && window.DB && window.DB.stocks) {
-          const existingIndex = window.DB.stocks.findIndex(s => s.id === change.doc.id);
-          if (existingIndex !== -1) {
-            window.DB.stocks[existingIndex] = stockData;
-          }
-        }
-      }
-      
-      if (change.type === 'removed') {
-        console.log('🗑️ Stock supprimé:', stockData);
-        // Supprimer de la base locale
-        if (typeof window !== 'undefined' && window.DB && window.DB.stocks) {
-          window.DB.stocks = window.DB.stocks.filter(s => s.id !== change.doc.id);
-        }
-      }
-    });
+    );
     
-    // Mettre à jour l'interface en temps réel
-    if (typeof renderStocks === 'function') renderStocks();
-    if (typeof populatePosProducts === 'function') populatePosProducts();
-    if (typeof renderDashboard === 'function') renderDashboard();
-    
-    // Notification temps réel
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('📦 AVICO-PRO', {
-        body: `Stock mis à jour: ${stockData.produit}`,
-        icon: '/favicon.ico'
-      });
-    }
+    // Retourner la fonction unsubscribe pour pouvoir arrêter l'écoute
+    resolve(unsubscribe);
   });
 }
 
 // ── SYNCHRONISATION TEMPS RÉEL COMPLÈTE ───────────────────────────────
 export function enableRealTimeSync() {
+  // Vérifier si Firebase est disponible
+  if (window.firebaseError || !db) {
+    console.warn('⚠️ Firebase non disponible, synchronisation temps réel désactivée');
+    return;
+  }
+  
   console.log('🔄 Activation synchronisation temps réel complète...');
   
   // Ventes - mise à jour instantanée
-  onSnapshot(collection(db, 'Sales'), (snapshot) => {
-    const ventes = [];
-    snapshot.forEach(doc => {
-      ventes.push({ id: doc.id, ...doc.data() });
+  try {
+    onSnapshot(collection(db, 'Sales'), (snapshot) => {
+      const ventes = [];
+      snapshot.forEach(doc => {
+        ventes.push({ id: doc.id, ...doc.data() });
+      });
+      
+      // Fusionner avec les ventes locales au lieu de remplacer
+      if (window.DB && window.DB.ventes) {
+        // Garder les ventes locales qui ne sont pas encore sur Firebase
+        const localVentes = window.DB.ventes.filter(v => !v.id || v.id.toString().startsWith('local_'));
+        // Ajouter les ventes de Firebase
+        const firebaseVentes = ventes.filter(v => v.id && !v.id.toString().startsWith('local_'));
+        // Fusionner
+        window.DB.ventes = [...firebaseVentes, ...localVentes];
+      } else {
+        window.DB.ventes = ventes;
+      }
+      
+      if (typeof renderVentes === 'function') renderVentes();
+      if (typeof renderDashboard === 'function') renderDashboard();
+      
+      console.log('💰 Ventes synchronisées en temps réel:', ventes.length);
+      console.log('📊 Total ventes après fusion:', window.DB.ventes.length);
     });
-    window.DB.ventes = ventes;
-    
-    if (typeof renderVentes === 'function') renderVentes();
-    if (typeof renderDashboard === 'function') renderDashboard();
-    
-    console.log('💰 Ventes synchronisées en temps réel:', ventes.length);
-  });
+  } catch (error) {
+    console.error('❌ Erreur synchronisation ventes temps réel:', error);
+  }
 
   // Clients - mise à jour instantanée
   onSnapshot(collection(db, 'Clients'), (snapshot) => {
@@ -194,28 +263,66 @@ export function enableRealTimeSync() {
 }
 
 export async function saveStockToFirebase(stockData) {
+  if (window.firebaseError || !db) {
+    console.warn('⚠️ Firebase non disponible, vente locale uniquement');
+    return { id: 'local_' + Date.now() };
+  }
+  
   try {
-    await addDoc(collection(db, 'Stocks'), {
-      ...stockData,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
-    console.log('✅ Stock enregistré dans Firebase:', stockData.produit);
-    return true;
+    const docRef = await addDoc(collection(db, 'Stocks'), stockData);
+    console.log('✅ Stock sauvegardé sur Firebase:', docRef.id);
+    return docRef;
   } catch (error) {
-    console.error('❌ Erreur enregistrement stock:', error);
-    return false;
+    console.error('❌ Erreur sauvegarde stock Firebase:', error);
+    return { id: 'local_' + Date.now() };
+  }
+}
+
+export async function saveVenteToFirebase(venteData) {
+  if (window.firebaseError || !db) {
+    console.warn('⚠️ Firebase non disponible, vente locale uniquement');
+    return { id: 'local_' + Date.now() };
+  }
+  
+  try {
+    const docRef = await addDoc(collection(db, 'Sales'), venteData);
+    console.log('✅ Vente sauvegardée sur Firebase:', docRef.id);
+    return docRef;
+  } catch (error) {
+    console.error('❌ Erreur sauvegarde vente Firebase:', error);
+    return { id: 'local_' + Date.now() };
+  }
+}
+
+export async function saveClientToFirebase(clientData) {
+  if (window.firebaseError || !db) {
+    console.warn('⚠️ Firebase non disponible, client local uniquement');
+    return { id: 'local_' + Date.now() };
+  }
+  
+  try {
+    const docRef = await addDoc(collection(db, 'Clients'), clientData);
+    console.log('✅ Client sauvegardé sur Firebase:', docRef.id);
+    return docRef;
+  } catch (error) {
+    console.error('❌ Erreur sauvegarde client Firebase:', error);
+    return { id: 'local_' + Date.now() };
   }
 }
 
 export async function saveEmployeeToFirebase(employeeData) {
+  if (window.firebaseError || !db) {
+    console.warn('⚠️ Firebase non disponible, employé local uniquement');
+    return false;
+  }
+  
   try {
     await addDoc(collection(db, 'Employees'), {
       ...employeeData,
       createdAt: new Date(),
       updatedAt: new Date()
     });
-    console.log('✅ Employé enregistré dans Firebase:', employeeData.name);
+    console.log('✅ Employé enregistré dans Firebase');
     return true;
   } catch (error) {
     console.error('❌ Erreur enregistrement employé:', error);
@@ -223,44 +330,15 @@ export async function saveEmployeeToFirebase(employeeData) {
   }
 }
 
-export async function saveClientToFirebase(clientData) {
-  try {
-    await addDoc(collection(db, 'Clients'), {
-      ...clientData,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
-    console.log('✅ Client enregistré dans Firebase:', clientData.nom);
-    return true;
-  } catch (error) {
-    console.error('❌ Erreur enregistrement client:', error);
-    return false;
-  }
-}
-
-export async function saveVenteToFirebase(venteData) {
-  try {
-    await addDoc(collection(db, 'Ventes'), {
-      ...venteData,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
-    console.log('✅ Vente enregistrée dans Firebase:', venteData.num);
-    return true;
-  } catch (error) {
-    console.error('❌ Erreur enregistrement vente:', error);
-    return false;
-  }
-}
-
 export async function saveFournisseurToFirebase(fournisseurData) {
+  if (window.firebaseError || !db) {
+    console.warn('⚠️ Firebase non disponible, fournisseur local uniquement');
+    return false;
+  }
+  
   try {
-    await addDoc(collection(db, 'Fournisseurs'), {
-      ...fournisseurData,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
-    console.log('✅ Fournisseur enregistré dans Firebase:', fournisseurData.nom);
+    await addDoc(collection(db, 'Fournisseurs'), fournisseurData);
+    console.log('✅ Fournisseur enregistré dans Firebase');
     return true;
   } catch (error) {
     console.error('❌ Erreur enregistrement fournisseur:', error);
@@ -269,13 +347,14 @@ export async function saveFournisseurToFirebase(fournisseurData) {
 }
 
 export async function saveLivraisonToFirebase(livraisonData) {
+  if (window.firebaseError || !db) {
+    console.warn('⚠️ Firebase non disponible, livraison locale uniquement');
+    return false;
+  }
+  
   try {
-    await addDoc(collection(db, 'Livraisons'), {
-      ...livraisonData,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
-    console.log('✅ Livraison enregistrée dans Firebase:', livraisonData.num);
+    await addDoc(collection(db, 'Livraisons'), livraisonData);
+    console.log('✅ Livraison enregistrée dans Firebase');
     return true;
   } catch (error) {
     console.error('❌ Erreur enregistrement livraison:', error);
@@ -284,16 +363,19 @@ export async function saveLivraisonToFirebase(livraisonData) {
 }
 
 export async function saveComptaToFirebase(comptaData) {
+  if (window.firebaseError || !db) {
+    console.warn('⚠️ Firebase non disponible, compta locale uniquement');
+    return false;
+  }
+  
   try {
-    await addDoc(collection(db, 'Comptabilite'), {
-      ...comptaData,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
-    console.log('✅ Opération comptabilité enregistrée dans Firebase:', comptaData.libelle);
+    await addDoc(collection(db, 'Comptabilite'), comptaData);
+    console.log('✅ Opération comptabilité enregistrée dans Firebase');
     return true;
   } catch (error) {
     console.error('❌ Erreur enregistrement comptabilité:', error);
     return false;
   }
 }
+
+console.log('🔥 Module Firebase AVICO-PRO chargé avec gestion d\'erreurs');

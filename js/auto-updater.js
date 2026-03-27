@@ -64,6 +64,12 @@ export class AutoUpdater {
   // Obtenir la version du serveur
   async getServerVersion() {
     try {
+      // 💡 SOLUTION : Ne pas appeler l'API si pas de backend
+      console.log('📡 Vérification version serveur désactivée (application frontend-only)');
+      return this.currentVersion;
+      
+      // Code original désactivé (pas de backend API)
+      /*
       const response = await fetch('/api/version', {
         cache: 'no-cache',
         headers: {
@@ -75,6 +81,7 @@ export class AutoUpdater {
         const data = await response.json();
         return data.version;
       }
+      */
     } catch (error) {
       console.warn('Failed to get server version:', error);
     }

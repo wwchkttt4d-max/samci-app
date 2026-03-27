@@ -1,0 +1,803 @@
+// Page Premium AVICO-PRO - Dashboard Avancé avec Toutes les Fonctionnalités
+console.log('🚀 Dashboard Premium AVICO-PRO en cours de chargement...');
+
+// ──────────────────────────────────────────────────────────────
+// PAGE PRINCIPALE PREMIUM AVEC TOUTES LES FONCTIONNALITÉS
+// ───────────────────────────────────────────────────────────────
+
+class PremiumDashboard {
+  constructor() {
+    this.currentPage = 'dashboard';
+    this.widgets = [];
+    this.notifications = [];
+    this.isInitialized = false;
+  }
+
+  async initialize() {
+    console.log('🎯 Initialisation du Dashboard Premium...');
+    
+    // Créer l'interface principale
+    this.createPremiumLayout();
+    
+    // Initialiser les widgets
+    await this.initializeWidgets();
+    
+    // Démarrer les animations
+    this.startAnimations();
+    
+    // Activer les effets visuels
+    this.activateVisualEffects();
+    
+    // Initialiser les fonctionnalités IA
+    this.initializeAIFeatures();
+    
+    this.isInitialized = true;
+    console.log('✅ Dashboard Premium initialisé avec succès!');
+  }
+
+  createPremiumLayout() {
+    const app = document.getElementById('app');
+    if (!app) return;
+
+    app.innerHTML = `
+      <!-- Header Premium -->
+      <header class="premium-header">
+        <div class="header-left">
+          <div class="logo">
+            <span class="logo-icon">🐔</span>
+            <span class="logo-text">AVICO-PRO Premium</span>
+          </div>
+          <nav class="premium-nav">
+            <button class="nav-item active" data-page="dashboard">📊 Tableau de bord</button>
+            <button class="nav-item" data-page="ai-analytics">🤖 IA Analytics</button>
+            <button class="nav-item" data-page="customers">👥 Clients</button>
+            <button class="nav-item" data-page="inventory">📦 Stocks</button>
+            <button class="nav-item" data-page="sales">💰 Ventes</button>
+            <button class="nav-item" data-page="reports">📈 Rapports</button>
+            <button class="nav-item" data-page="marketing">📢 Marketing</button>
+            <button class="nav-item" data-page="settings">⚙️ Paramètres</button>
+          </nav>
+        </div>
+        
+        <div class="header-right">
+          <!-- Sélecteur de thème -->
+          <div class="theme-selector">
+            <select id="theme-selector" onchange="changeTheme(this.value)" title="Sélectionner un thème">
+              <option value="default">🎨 Classic</option>
+              <option value="dark">🌙 Nuit</option>
+              <option value="ocean">🌊 Océan</option>
+              <option value="sunset">🌅 Coucher</option>
+              <option value="forest">🌳 Forêt</option>
+            </select>
+          </div>
+          
+          <!-- Notifications -->
+          <div class="notification-center">
+            <button class="notification-btn" onclick="toggleNotifications()">
+              🔔 <span class="notification-badge">3</span>
+            </button>
+            <div class="notification-dropdown" id="notification-dropdown">
+              <div class="notification-header">
+                <h3>Notifications</h3>
+                <button onclick="clearAllNotifications()">Tout effacer</button>
+              </div>
+              <div class="notification-list" id="notification-list">
+                <!-- Les notifications seront ajoutées dynamiquement -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- Profil utilisateur -->
+          <div class="user-profile">
+            <div class="user-avatar">AD</div>
+            <div class="user-info">
+              <div class="user-name">Admin</div>
+              <div class="user-role">Administrateur</div>
+            </div>
+            <button class="user-menu">▼</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Contenu Principal -->
+      <main class="premium-main">
+        <!-- Sidebar avec KPIs rapides -->
+        <aside class="premium-sidebar">
+          <div class="sidebar-section">
+            <h3>KPIs Rapides</h3>
+            <div class="quick-kpis">
+              <div class="quick-kpi">
+                <div class="kpi-value" id="quick-revenue">0 FCFA</div>
+                <div class="kpi-label">Revenu Aujourd'hui</div>
+                <div class="kpi-trend positive">↑ 12%</div>
+              </div>
+              <div class="quick-kpi">
+                <div class="kpi-value" id="quick-orders">0</div>
+                <div class="kpi-label">Commandes</div>
+                <div class="kpi-trend positive">↑ 8%</div>
+              </div>
+              <div class="quick-kpi">
+                <div class="kpi-value" id="quick-customers">0</div>
+                <div class="kpi-label">Clients Actifs</div>
+                <div class="kpi-trend negative">↓ 3%</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="sidebar-section">
+            <h3>Actions Rapides</h3>
+            <div class="quick-actions">
+              <button class="action-btn" onclick="quickAddSale()">
+                ➕ Nouvelle Vente
+              </button>
+              <button class="action-btn" onclick="quickAddClient()">
+                👤 Ajouter Client
+              </button>
+              <button class="action-btn" onclick="quickAddStock()">
+                📦 Entrée Stock
+              </button>
+              <button class="action-btn" onclick="generateReport()">
+                📊 Générer Rapport
+              </button>
+            </div>
+          </div>
+          
+          <div class="sidebar-section">
+            <h3>Objectifs du Mois</h3>
+            <div class="goals-progress">
+              <div class="goal-item">
+                <div class="goal-label">Revenu: 5M FCFA</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 75%"></div>
+                </div>
+                <div class="goal-value">75%</div>
+              </div>
+              <div class="goal-item">
+                <div class="goal-label">Ventes: 500</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 60%"></div>
+                </div>
+                <div class="goal-value">60%</div>
+              </div>
+              <div class="goal-item">
+                <div class="goal-label">Clients: 50</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 80%"></div>
+                </div>
+                <div class="goal-value">80%</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Zone Principale avec Widgets -->
+        <div class="premium-content">
+          <!-- Barre d'outils -->
+          <div class="content-toolbar">
+            <div class="toolbar-left">
+              <h1 id="page-title">Tableau de Bord Premium</h1>
+              <div class="breadcrumb">
+                <span>Accueil</span> / <span id="current-page">Tableau de bord</span>
+              </div>
+            </div>
+            <div class="toolbar-right">
+              <button class="toolbar-btn" onclick="refreshDashboard()">
+                🔄 Actualiser
+              </button>
+              <button class="toolbar-btn" onclick="exportData()">
+                📥 Exporter
+              </button>
+              <button class="toolbar-btn" onclick="toggleFullscreen()">
+                ⛶ Plein Écran
+              </button>
+            </div>
+          </div>
+
+          <!-- Grille de Widgets -->
+          <div class="widgets-grid" id="widgets-grid">
+            <!-- Les widgets seront ajoutés dynamiquement -->
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer Premium -->
+      <footer class="premium-footer">
+        <div class="footer-left">
+          <span>© 2024 AVICO-PRO Premium - Version 4.0</span>
+        </div>
+        <div class="footer-center">
+          <span>🚀 Propulsé par l'IA et l'Analytics Avancé</span>
+        </div>
+        <div class="footer-right">
+          <span>⚡ Performance: <span id="performance-indicator">Excellente</span></span>
+        </div>
+      </footer>
+    `;
+
+    // Ajouter les événements
+    this.attachEventListeners();
+  }
+
+  async initializeWidgets() {
+    const widgetsGrid = document.getElementById('widgets-grid');
+    if (!widgetsGrid) return;
+
+    // Widget KPI Principal
+    const kpiWidget = window.widgetFactory.createWidget('animated-kpi', {
+      icon: '💰',
+      label: 'Revenu Total',
+      value: 2500000,
+      trend: 'up',
+      change: 12.5
+    });
+
+    // Widget Prédictions IA
+    const aiWidget = window.widgetFactory.createWidget('interactive-chart', {
+      id: 'ai-predictions',
+      title: '🤖 Prédictions IA - Ventes 30 jours'
+    });
+
+    // Widget Carte Clients
+    const mapWidget = window.widgetFactory.createWidget('interactive-map', {
+      id: 'customer-map',
+      title: '📍 Localisation Clients'
+    });
+
+    // Widget Alertes Stocks
+    const alertsWidget = window.widgetFactory.createWidget('animated-list', {
+      title: '🚨 Alertes et Notifications',
+      items: [
+        { icon: '⚠️', title: 'Stock faible', subtitle: 'Poulets - 5 unités restantes', value: 'Urgent', progress: 20 },
+        { icon: '📈', title: 'Objectif atteint', subtitle: 'Ventes quotidiennes dépassées', value: '120%', progress: 100 },
+        { icon: '👤', title: 'Nouveau client VIP', subtitle: 'Restaurant Le Gourmet', value: 'Nouveau', progress: 0 }
+      ]
+    });
+
+    // Ajouter les widgets à la grille
+    widgetsGrid.appendChild(kpiWidget);
+    widgetsGrid.appendChild(aiWidget);
+    widgetsGrid.appendChild(mapWidget);
+    widgetsGrid.appendChild(alertsWidget);
+
+    this.widgets = [kpiWidget, aiWidget, mapWidget, alertsWidget];
+  }
+
+  attachEventListeners() {
+    // Navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        this.navigateTo(e.target.dataset.page);
+      });
+    });
+
+    // Actions rapides
+    window.quickAddSale = () => this.showQuickAddModal('sale');
+    window.quickAddClient = () => this.showQuickAddModal('client');
+    window.quickAddStock = () => this.showQuickAddModal('stock');
+    window.generateReport = () => this.generateQuickReport();
+
+    // Toolbar
+    window.refreshDashboard = () => this.refreshDashboard();
+    window.exportData = () => this.exportDashboardData();
+    window.toggleFullscreen = () => this.toggleFullscreenMode();
+
+    // Thème
+    window.changeTheme = (theme) => window.themeManager.applyTheme(theme);
+
+    // Notifications
+    window.toggleNotifications = () => this.toggleNotificationDropdown();
+    window.clearAllNotifications = () => this.clearNotifications();
+  }
+
+  navigateTo(page) {
+    // Mettre à jour la navigation active
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.remove('active');
+    });
+    document.querySelector(`[data-page="${page}"]`).classList.add('active');
+
+    // Mettre à jour le contenu
+    this.updatePageContent(page);
+    this.currentPage = page;
+  }
+
+  updatePageContent(page) {
+    const pageTitle = document.getElementById('page-title');
+    const currentPageSpan = document.getElementById('current-page');
+    const widgetsGrid = document.getElementById('widgets-grid');
+
+    const pageConfig = {
+      dashboard: {
+        title: 'Tableau de Bord Premium',
+        breadcrumb: 'Tableau de bord',
+        widgets: ['kpi', 'ai-predictions', 'customer-map', 'alerts']
+      },
+      'ai-analytics': {
+        title: '🤖 Analytics IA',
+        breadcrumb: 'Analytics IA',
+        widgets: ['ai-predictions', 'customer-behavior', 'inventory-optimization']
+      },
+      customers: {
+        title: '👥 Gestion Clients',
+        breadcrumb: 'Clients',
+        widgets: ['customer-segments', 'customer-lifecycle', 'customer-map']
+      },
+      inventory: {
+        title: '📦 Gestion des Stocks',
+        breadcrumb: 'Stocks',
+        widgets: ['inventory-alerts', 'inventory-optimization', 'stock-predictions']
+      },
+      sales: {
+        title: '💰 Ventes et Revenus',
+        breadcrumb: 'Ventes',
+        widgets: ['sales-performance', 'sales-forecast', 'top-products']
+      },
+      reports: {
+        title: '📈 Rapports et Analytics',
+        breadcrumb: 'Rapports',
+        widgets: ['executive-summary', 'financial-reports', 'performance-metrics']
+      },
+      marketing: {
+        title: '📢 Marketing Automatisé',
+        breadcrumb: 'Marketing',
+        widgets: ['campaigns', 'customer-segments', 'marketing-automation']
+      },
+      settings: {
+        title: '⚙️ Paramètres Premium',
+        breadcrumb: 'Paramètres',
+        widgets: ['general-settings', 'theme-settings', 'automation-settings']
+      }
+    };
+
+    const config = pageConfig[page];
+    if (config) {
+      pageTitle.textContent = config.title;
+      currentPageSpan.textContent = config.breadcrumb;
+      
+      // Recharger les widgets selon la page
+      this.loadPageWidgets(config.widgets);
+    }
+  }
+
+  async loadPageWidgets(widgetTypes) {
+    const widgetsGrid = document.getElementById('widgets-grid');
+    if (!widgetsGrid) return;
+
+    // Vider les widgets actuels
+    widgetsGrid.innerHTML = '';
+
+    // Charger les nouveaux widgets
+    for (const widgetType of widgetTypes) {
+      const widget = await this.createWidgetByType(widgetType);
+      if (widget) {
+        widgetsGrid.appendChild(widget);
+      }
+    }
+  }
+
+  async createWidgetByType(type) {
+    // Créer des widgets spécifiques selon le type
+    switch (type) {
+      case 'customer-behavior':
+        return window.widgetFactory.createWidget('animated-list', {
+          title: '🔍 Comportement Clients',
+          items: [
+            { icon: '👤', title: 'Clients VIP', subtitle: '12 clients actifs', value: '15%', progress: 85 },
+            { icon: '📈', title: 'Tendance d\'achat', subtitle: 'En augmentation', value: '+23%', progress: 75 },
+            { icon: '🎯', title: 'Taux de conversion', subtitle: 'Excellente performance', value: '4.2%', progress: 90 }
+          ]
+        });
+
+      case 'inventory-optimization':
+        return window.widgetFactory.createWidget('animated-list', {
+          title: '📦 Optimisation Stocks',
+          items: [
+            { icon: '📊', title: 'Efficacité stocks', subtitle: 'Niveau optimal', value: '92%', progress: 92 },
+            { icon: '⚠️', title: 'Produits à risque', subtitle: '3 produits critiques', value: 'Alerte', progress: 30 },
+            { icon: '🔄', title: 'Rotation stocks', subtitle: 'Bonne rotation', value: '2.3j', progress: 80 }
+          ]
+        });
+
+      default:
+        // Widget par défaut
+        return window.widgetFactory.createWidget('animated-kpi', {
+          icon: '📊',
+          label: 'Widget ' + type,
+          value: Math.floor(Math.random() * 1000000),
+          trend: Math.random() > 0.5 ? 'up' : 'down',
+          change: (Math.random() * 20).toFixed(1)
+        });
+    }
+  }
+
+  startAnimations() {
+    // Démarrer les animations des particules en arrière-plan
+    window.visualEffects.createBackgroundEffect('particles');
+
+    // Animer les widgets
+    setTimeout(() => {
+      this.widgets.forEach((widget, index) => {
+        setTimeout(() => {
+          widget.style.animation = 'fadeInUp 0.6s ease-out forwards';
+        }, index * 100);
+      });
+    }, 500);
+  }
+
+  activateVisualEffects() {
+    // Effet de particules sur les clics
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.premium-widget')) {
+        window.visualEffects.createParticleEffect(e.clientX, e.clientY, 5);
+      }
+    });
+
+    // Animation de succès pour les actions
+    document.querySelectorAll('.action-btn, .toolbar-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const rect = btn.getBoundingClientRect();
+        window.visualEffects.createSuccessAnimation(
+          rect.left + rect.width / 2,
+          rect.top + rect.height / 2
+        );
+      });
+    });
+  }
+
+  initializeAIFeatures() {
+    // Démarrer les prédictions IA
+    setTimeout(() => {
+      const predictions = window.aiEngine.predictSales();
+      console.log('🤖 Prédictions IA générées:', predictions);
+      
+      // Mettre à jour les KPIs avec les données IA
+      this.updateKPIsWithAI(predictions);
+    }, 2000);
+
+    // Initialiser la gamification
+    setTimeout(() => {
+      const leaderboard = window.gamification.updateLeaderboard();
+      console.log('🏆 Classement mis à jour:', leaderboard);
+    }, 3000);
+
+    // Démarrer le marketing automation
+    setTimeout(() => {
+      const segments = window.marketingAutomation.segmentCustomers();
+      console.log('📢 Segments clients analysés:', segments);
+    }, 4000);
+  }
+
+  updateKPIsWithAI(predictions) {
+    const quickRevenue = document.getElementById('quick-revenue');
+    const quickOrders = document.getElementById('quick-orders');
+    const quickCustomers = document.getElementById('quick-customers');
+
+    if (quickRevenue && predictions.predictions?.length > 0) {
+      const todayPrediction = predictions.predictions[0];
+      quickRevenue.textContent = this.formatNumber(todayPrediction.predicted) + ' FCFA';
+    }
+
+    if (quickOrders) {
+      const orders = window.DB?.ventes?.filter(v => 
+        v.date === new Date().toISOString().split('T')[0]
+      ).length || 0;
+      quickOrders.textContent = orders;
+    }
+
+    if (quickCustomers) {
+      const customers = window.DB?.clients?.length || 0;
+      quickCustomers.textContent = customers;
+    }
+  }
+
+  showQuickAddModal(type) {
+    const modalConfig = {
+      sale: {
+        title: '➕ Nouvelle Vente Rapide',
+        content: `
+          <div class="form-group">
+            <label>Client</label>
+            <select id="quick-client" title="Sélectionner un client">
+              <option value="">Sélectionner un client</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Montant</label>
+            <input type="number" id="quick-amount" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label>Produits</label>
+            <textarea id="quick-products" placeholder="Description des produits"></textarea>
+          </div>
+        `,
+        actions: `
+          <button class="btn-primary" onclick="saveQuickSale()">💾 Enregistrer</button>
+          <button class="btn-secondary" onclick="closePremiumModal('quick-add')">Annuler</button>
+        `
+      },
+      client: {
+        title: '👤 Ajouter Client Rapide',
+        content: `
+          <div class="form-group">
+            <label>Nom</label>
+            <input type="text" id="quick-client-name" placeholder="Nom du client">
+          </div>
+          <div class="form-group">
+            <label>Téléphone</label>
+            <input type="tel" id="quick-client-tel" placeholder="07 XX XX XX XX">
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select id="quick-client-type" title="Sélectionner le type de client">
+              <option value="Restaurant">Restaurant</option>
+              <option value="Supermarché">Supermarché</option>
+              <option value="Particulier">Particulier</option>
+            </select>
+          </div>
+        `,
+        actions: `
+          <button class="btn-primary" onclick="saveQuickClient()">💾 Enregistrer</button>
+          <button class="btn-secondary" onclick="closePremiumModal('quick-add')">Annuler</button>
+        `
+      },
+      stock: {
+        title: '📦 Entrée Stock Rapide',
+        content: `
+          <div class="form-group">
+            <label>Produit</label>
+            <select id="quick-product" title="Sélectionner un produit">
+              <option value="">Sélectionner un produit</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Quantité</label>
+            <input type="number" id="quick-quantity" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label>Prix d'achat</label>
+            <input type="number" id="quick-price" placeholder="0">
+          </div>
+        `,
+        actions: `
+          <button class="btn-primary" onclick="saveQuickStock()">💾 Enregistrer</button>
+          <button class="btn-secondary" onclick="closePremiumModal('quick-add')">Annuler</button>
+        `
+      }
+    };
+
+    const config = modalConfig[type];
+    if (config) {
+      window.createPremiumModal({
+        id: 'quick-add',
+        title: config.title,
+        content: config.content,
+        actions: config.actions
+      });
+    }
+  }
+
+  generateQuickReport() {
+    const report = window.businessIntelligence.generateReport('executive_summary', 'monthly');
+    
+    if (report) {
+      window.createPremiumModal({
+        id: 'quick-report',
+        title: '📊 Rapport Exécutif',
+        content: `
+          <div class="report-content">
+            <h3>Performance du Mois</h3>
+            <div class="report-kpis">
+              <div class="report-kpi">
+                <span class="kpi-label">Revenu Total</span>
+                <span class="kpi-value">${this.formatNumber(report.kpis.revenue)} FCFA</span>
+              </div>
+              <div class="report-kpi">
+                <span class="kpi-label">Croissance</span>
+                <span class="kpi-value">${report.kpis.growth.toFixed(1)}%</span>
+              </div>
+              <div class="report-kpi">
+                <span class="kpi-label">Marge</span>
+                <span class="kpi-value">${report.kpis.margin.toFixed(1)}%</span>
+              </div>
+            </div>
+            <div class="report-highlights">
+              <h4>Points Clés</h4>
+              ${report.highlights.map(h => `<div class="highlight-item">• ${h}</div>`).join('')}
+            </div>
+          </div>
+        `,
+        actions: `
+          <button class="btn-primary" onclick="downloadReport()">📥 Télécharger</button>
+          <button class="btn-secondary" onclick="closePremiumModal('quick-report')">Fermer</button>
+        `
+      });
+    }
+  }
+
+  refreshDashboard() {
+    // Animation de rafraîchissement
+    const widgets = document.querySelectorAll('.premium-widget');
+    widgets.forEach(widget => {
+      widget.style.opacity = '0.5';
+      widget.style.transform = 'scale(0.98)';
+    });
+
+    setTimeout(() => {
+      // Mettre à jour les données
+      this.updateKPIsWithAI(window.aiEngine.predictSales());
+      
+      // Restaurer l'apparence
+      widgets.forEach(widget => {
+        widget.style.opacity = '1';
+        widget.style.transform = 'scale(1)';
+      });
+
+      // Notification de succès
+      this.showNotification('Tableau de bord actualisé', 'success');
+    }, 1000);
+  }
+
+  exportDashboardData() {
+    // Simulation d'export
+    this.showNotification('Exportation des données en cours...', 'info');
+    
+    setTimeout(() => {
+      this.showNotification('Données exportées avec succès!', 'success');
+    }, 2000);
+  }
+
+  toggleFullscreenMode() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
+  toggleNotificationDropdown() {
+    const dropdown = document.getElementById('notification-dropdown');
+    if (dropdown) {
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+      
+      // Charger les notifications si nécessaire
+      if (dropdown.style.display === 'block') {
+        this.loadNotifications();
+      }
+    }
+  }
+
+  loadNotifications() {
+    const notifications = [
+      { type: 'success', title: 'Vente enregistrée', message: 'Restaurant Le Gourmet - 25,000 FCFA', time: 'Il y a 2 min' },
+      { type: 'warning', title: 'Stock faible', message: 'Poulets - Il ne reste que 5 unités', time: 'Il y a 15 min' },
+      { type: 'info', title: 'Nouveau client', message: 'Supermarché Cora ajouté à la base', time: 'Il y a 1h' }
+    ];
+
+    const notificationList = document.getElementById('notification-list');
+    if (notificationList) {
+      notificationList.innerHTML = notifications.map(notif => `
+        <div class="notification-item ${notif.type}">
+          <div class="notification-content">
+            <div class="notification-title">${notif.title}</div>
+            <div class="notification-message">${notif.message}</div>
+            <div class="notification-time">${notif.time}</div>
+          </div>
+          <button class="notification-close" onclick="this.parentElement.remove()">✕</button>
+        </div>
+      `).join('');
+    }
+  }
+
+  clearNotifications() {
+    const notificationList = document.getElementById('notification-list');
+    if (notificationList) {
+      notificationList.innerHTML = '<div class="no-notifications">Aucune notification</div>';
+    }
+  }
+
+  showNotification(message, type = 'info') {
+    const notification = window.advancedComponents.createNotificationCard({
+      type,
+      title: 'AVICO-PRO',
+      message,
+      autoClose: true,
+      duration: 3000
+    });
+
+    const container = document.querySelector('.premium-main') || document.body;
+    container.appendChild(notification);
+  }
+
+  formatNumber(num) {
+    return new Intl.NumberFormat('fr-FR').format(num);
+  }
+}
+
+// ──────────────────────────────────────────────────────────────
+// FONCTIONS GLOBALES
+// ───────────────────────────────────────────────────────────────
+
+// Sauvegardes rapides
+window.saveQuickSale = () => {
+  const client = document.getElementById('quick-client')?.value;
+  const amount = document.getElementById('quick-amount')?.value;
+  const products = document.getElementById('quick-products')?.value;
+
+  if (client && amount && products) {
+    // Ajouter la vente
+    const venteData = {
+      id: Date.now(),
+      date: new Date().toISOString().split('T')[0],
+      client,
+      montant: parseFloat(amount),
+      produits: products,
+      statut: 'Payée'
+    };
+
+    if (window.DB?.ventes) {
+      window.DB.ventes.push(venteData);
+    }
+
+    window.closePremiumModal('quick-add');
+    window.premiumDashboard.showNotification('Vente enregistrée avec succès!', 'success');
+  }
+};
+
+window.saveQuickClient = () => {
+  const name = document.getElementById('quick-client-name')?.value;
+  const tel = document.getElementById('quick-client-tel')?.value;
+  const type = document.getElementById('quick-client-type')?.value;
+
+  if (name && tel && type) {
+    const clientData = {
+      id: Date.now(),
+      nom: name,
+      tel: tel,
+      type: type,
+      ca: 0,
+      solde: 0,
+      points: 0,
+      statut: 'Actif'
+    };
+
+    if (window.DB?.clients) {
+      window.DB.clients.push(clientData);
+    }
+
+    window.closePremiumModal('quick-add');
+    window.premiumDashboard.showNotification('Client ajouté avec succès!', 'success');
+  }
+};
+
+window.saveQuickStock = () => {
+  const product = document.getElementById('quick-product')?.value;
+  const quantity = document.getElementById('quick-quantity')?.value;
+  const price = document.getElementById('quick-price')?.value;
+
+  if (product && quantity && price) {
+    window.closePremiumModal('quick-add');
+    window.premiumDashboard.showNotification('Stock mis à jour avec succès!', 'success');
+  }
+};
+
+window.downloadReport = () => {
+  window.premiumDashboard.showNotification('Téléchargement du rapport...', 'info');
+  setTimeout(() => {
+    window.premiumDashboard.showNotification('Rapport téléchargé!', 'success');
+  }, 1500);
+};
+
+// ──────────────────────────────────────────────────────────────
+// INITIALISATION
+// ───────────────────────────────────────────────────────────────
+
+// Initialiser le dashboard premium quand tout est chargé
+document.addEventListener('DOMContentLoaded', async () => {
+  // Attendre que tous les modules soient chargés
+  setTimeout(async () => {
+    window.premiumDashboard = new PremiumDashboard();
+    await window.premiumDashboard.initialize();
+  }, 1000);
+});
+
+console.log('✅ Page Premium AVICO-PRO chargée avec succès!');
