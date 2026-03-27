@@ -31,11 +31,20 @@ jobs:
         # Copier les fichiers principaux
         cp index.html build/
         cp style.css build/
+        cp premium-dashboard.html build/
+        cp premium-styles.css build/
         cp -r js build/
         cp -r docs build/
         cp manifest.json build/
         cp notifications.js build/
         cp mobile-app.js build/
+        cp firebase-diagnostic.js build/
+        cp login-diagnostic.js build/
+        cp mini-server.js build/
+        cp test-ventes.js build/
+        cp CLIENT_DEMO_INSTRUCTIONS.md build/
+        cp SECURITY_REPORT.md build/
+        cp README.md build/
         
         # Copier les assets si nécessaire
         if [ -d "assets" ]; then
@@ -47,4 +56,3 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build
-        destination_dir: demo
