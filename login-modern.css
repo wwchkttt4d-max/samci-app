@@ -1,0 +1,433 @@
+/* ══════════════════════════════════════════
+   PAGE DE CONNEXION MODERNE - ARRIÈRE-PLAN ANIMÉ
+   Animations avicoles premium avec particules et effets
+══════════════════════════════════════════ */
+
+/* ─── Arrière-plan moderne avec animations avicoles ─────────────────────────────── */
+#loginPage {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #ffa0c9 75%, #fed6e3 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  overflow: hidden;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ─── Particules flottantes animées ─────────────────────────────── */
+.particle-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.particle-egg {
+  width: 20px;
+  height: 26px;
+  background: linear-gradient(135deg, #fff 0%, #f8f8ff 100%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  box-shadow: 0 4px 8px rgba(255,255,255,0.3);
+  animation: floatEgg 8s infinite ease-in-out;
+}
+
+.particle-feather {
+  width: 15px;
+  height: 30px;
+  background: linear-gradient(180deg, #fff 0%, #f0f0f0 100%);
+  border-radius: 50% 10% 50% 10%;
+  box-shadow: 0 2px 4px rgba(255,255,255,0.4);
+  animation: floatFeather 10s infinite ease-in-out;
+}
+
+.particle-chicken {
+  font-size: 24px;
+  animation: floatChicken 12s infinite ease-in-out;
+}
+
+@keyframes floatEgg {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-20px) rotate(5deg); }
+  50% { transform: translateY(-10px) rotate(-3deg); }
+  75% { transform: translateY(-30px) rotate(2deg); }
+}
+
+@keyframes floatFeather {
+  0%, 100% { transform: translateY(0) rotate(0deg) translateX(0); }
+  33% { transform: translateY(-25px) rotate(120deg) translateX(10px); }
+  66% { transform: translateY(-15px) rotate(240deg) translateX(-10px); }
+}
+
+@keyframes floatChicken {
+  0%, 100% { transform: translateY(0) scale(1) rotate(0deg); }
+  25% { transform: translateY(-30px) scale(1.1) rotate(5deg); }
+  50% { transform: translateY(-20px) scale(0.9) rotate(-3deg); }
+  75% { transform: translateY(-40px) scale(1.05) rotate(2deg); }
+}
+
+/* ─── Formes géométriques animées ─────────────────────────────── */
+.geometric-shape {
+  position: absolute;
+  opacity: 0.1;
+  border: 2px solid rgba(255,255,255,0.3);
+  animation: rotateShape 20s infinite linear;
+}
+
+.shape-circle {
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+}
+
+.shape-triangle {
+  width: 0;
+  height: 0;
+  border-left: 50px solid transparent;
+  border-right: 50px solid transparent;
+  border-bottom: 86px solid rgba(255,255,255,0.1);
+  border-top: none;
+}
+
+.shape-hexagon {
+  width: 100px;
+  height: 55px;
+  background: rgba(255,255,255,0.1);
+  position: relative;
+}
+
+.shape-hexagon:before,
+.shape-hexagon:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  border-left: 50px solid transparent;
+  border-right: 50px solid transparent;
+}
+
+.shape-hexagon:before {
+  bottom: 100%;
+  border-bottom: 28px solid rgba(255,255,255,0.1);
+}
+
+.shape-hexagon:after {
+  top: 100%;
+  border-top: 28px solid rgba(255,255,255,0.1);
+}
+
+@keyframes rotateShape {
+  from { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  to { transform: rotate(360deg) scale(1); }
+}
+
+/* ─── Effet de lumière animée ─────────────────────────────── */
+.light-effect {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: moveLight 15s infinite ease-in-out;
+}
+
+@keyframes moveLight {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(100px, -50px) scale(1.2); }
+  50% { transform: translate(-50px, 100px) scale(0.8); }
+  75% { transform: translate(50px, 50px) scale(1.1); }
+}
+
+/* ─── Effet de vague animée ─────────────────────────────── */
+.wave-effect {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+  animation: wave 8s infinite ease-in-out;
+}
+
+.wave-effect:before,
+.wave-effect:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+}
+
+.wave-effect:before {
+  animation: wave 8s infinite ease-in-out 0.5s;
+}
+
+.wave-effect:after {
+  animation: wave 8s infinite ease-in-out 1s;
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50% { transform: translateY(-20px) scaleY(1.2); }
+}
+
+/* ─── Boîte de connexion moderne ─────────────────────────────── */
+.login-box {
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 48px;
+  width: 420px;
+  max-width: 95vw;
+  box-shadow: 
+    0 24px 80px rgba(0,0,0,0.2),
+    0 0 0 1px rgba(255,255,255,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+  position: relative;
+  animation: loginDrop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  z-index: 10;
+}
+
+@keyframes loginDrop {
+  from { transform: translateY(-40px) scale(0.9); opacity: 0; }
+  to   { transform: translateY(0) scale(1);     opacity: 1; }
+}
+
+/* ─── Effet de brillance sur la boîte ─────────────────────────────── */
+.login-box:before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #ff6b6b);
+  background-size: 300% 300%;
+  border-radius: 24px;
+  z-index: -1;
+  animation: borderGlow 4s ease infinite;
+  opacity: 0.7;
+}
+
+@keyframes borderGlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ─── Logo premium animé ─────────────────────────────── */
+.login-logo { 
+  text-align: center; 
+  margin-bottom: 32px; 
+  position: relative;
+}
+
+.login-logo .egg-icon {
+  font-size: 52px;
+  display: block;
+  animation: premiumEggBounce 2s infinite;
+  filter: drop-shadow(0 4px 8px rgba(255,255,255,0.3));
+}
+
+@keyframes premiumEggBounce {
+  0%, 100% { 
+    transform: translateY(0) scale(1); 
+    filter: drop-shadow(0 4px 8px rgba(255,255,255,0.3));
+  }
+  50% { 
+    transform: translateY(-8px) scale(1.05); 
+    filter: drop-shadow(0 8px 16px rgba(255,255,255,0.5));
+  }
+}
+
+.login-logo h1 { 
+  font-size: 28px; 
+  font-weight: 700; 
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-top: 8px; 
+}
+
+.login-logo p {  
+  font-size: 13px; 
+  color: var(--text3); 
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* ─── Champs de formulaire premium ─────────────────────────────── */
+.login-field { 
+  margin-bottom: 20px; 
+  position: relative;
+}
+
+.login-field label {
+  display: block;
+  font-size: 12px; 
+  font-weight: 600;
+  color: var(--text2);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.login-field input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: var(--font);
+  outline: none;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--text);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+.login-field input:focus {
+  border-color: #667eea;
+  background: rgba(255,255,255,0.2);
+  box-shadow: 
+    0 0 0 3px rgba(102,126,234,0.1),
+    0 8px 24px rgba(102,126,234,0.15);
+  transform: translateY(-2px);
+}
+
+.login-field input::placeholder {
+  color: rgba(0,0,0,0.3);
+}
+
+/* ─── Bouton de connexion premium ─────────────────────────────── */
+.login-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-btn:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(102,126,234,0.4);
+}
+
+.login-btn:hover:before {
+  opacity: 1;
+}
+
+.login-btn:active { 
+  transform: translateY(0); 
+}
+
+.login-btn span {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Message d'aide premium ─────────────────────────────── */
+.login-hint {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 12px; 
+  color: var(--text3);
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 12px; 
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.login-hint strong { 
+  color: #667eea; 
+  font-weight: 600;
+}
+
+/* ─── État caché ─────────────────────────────── */
+#loginPage.hide {
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
+
+/* ─── Responsive ─────────────────────────────── */
+@media (max-width: 480px) {
+  .login-box {
+    padding: 32px 24px;
+    margin: 20px;
+  }
+  
+  .login-logo .egg-icon {
+    font-size: 42px;
+  }
+  
+  .login-logo h1 {
+    font-size: 24px;
+  }
+  
+  .login-field input {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+  
+  .login-btn {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
+
+/* ─── Mode sommet ─────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  #loginPage {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #533483 75%, #1a1a2e 100%);
+  }
+  
+  .login-box {
+    background: rgba(20,20,40,0.95);
+    color: white;
+  }
+  
+  .login-field input {
+    background: rgba(255,255,255,0.05);
+    color: white;
+    border-color: rgba(255,255,255,0.1);
+  }
+  
+  .login-field input::placeholder {
+    color: rgba(255,255,255,0.4);
+  }
+}
