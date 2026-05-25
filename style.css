@@ -1058,3 +1058,54 @@ body {
   .sb-item { justify-content: center; padding: 12px; }
   .kpi-grid { grid-template-columns: 1fr 1fr; }
 }
+/* ══════════════════════════════════════════
+   ADDITIONS v5 — classes manquantes
+══════════════════════════════════════════ */
+
+/* Timeline */
+.timeline-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--green-pale); }
+.timeline-dot  { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+.timeline-dot.green { background:var(--green); }
+.timeline-dot.gold  { background:var(--gold); }
+.timeline-content   { flex:1; min-width:0; }
+.timeline-title  { font-size:13px; font-weight:600; color:var(--text); }
+.timeline-sub    { font-size:11px; color:var(--text3); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.timeline-date   { font-size:10px; color:var(--text3); margin-top:2px; }
+
+/* Mouvements stock */
+.mvt-row       { display:flex; align-items:flex-start; gap:10px; padding:8px 0; border-bottom:1px solid var(--green-pale); }
+.mvt-dot       { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+.mvt-dot.green { background:var(--green); }
+.mvt-dot.red   { background:var(--red); }
+.mvt-produit   { font-size:13px; font-weight:600; color:var(--text); }
+.mvt-detail    { font-size:11px; color:var(--text3); margin-top:2px; }
+.mvt-date      { font-weight:600; color:var(--green-dark); }
+
+/* Livraisons */
+.livraison-card { background:white; border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; transition:var(--transition); }
+.livraison-card:hover { box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.liv-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.liv-num    { font-family:var(--mono); font-weight:700; font-size:13px; color:var(--green-dark); }
+.liv-body   { display:flex; flex-wrap:wrap; gap:10px; font-size:12px; color:var(--text3); }
+.liv-pending-item { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--green-pale); flex-wrap:wrap; }
+
+/* Detail table dans modal */
+.detail-table { width:100%; border-collapse:collapse; }
+.detail-table td { padding:10px 12px; border-bottom:1px solid var(--green-pale); font-size:13px; }
+.detail-table td:first-child { color:var(--text3); font-weight:500; width:35%; }
+
+/* POS low stock */
+.pos-prod-card.low-stock { border-color:var(--red); opacity:0.8; }
+.pos-prod-card.low-stock:hover { border-color:var(--red); }
+
+/* Monnaie display */
+.monnaie-display { padding:10px 14px; border-radius:8px; background:var(--green-pale); font-size:13px; font-weight:600; color:var(--green-dark); margin-bottom:10px; }
+
+/* Bar chart amélioré */
+.bar-chart-wrap { display:flex; align-items:flex-end; gap:4px; height:120px; padding:0 4px; }
+.bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
+.bar-col .bar { width:100%; border-radius:4px 4px 0 0; min-height:4px; transition:height 0.8s ease; }
+.bar-col .bar-value { font-size:9px; color:var(--green-dark); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%; text-align:center; display:none; }
+.bar-col:hover .bar-value { display:block; }
+.bar-col .bar-label { font-size:10px; color:var(--text3); white-space:nowrap; }
+
