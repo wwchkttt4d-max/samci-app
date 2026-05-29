@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "start": "node local-server.js",
+    "check": "node --check app.js && node --check js/ui.js && node --check js/firebase.js && node --check local-server.js"
+  },
   "dependencies": {
     "firebase": "^12.11.0"
   }
