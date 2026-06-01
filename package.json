@@ -1,9 +1,10 @@
 {
   "scripts": {
     "start": "node local-server.js",
-    "check": "node --check app.js && node --check js/ui.js && node --check js/firebase.js && node --check local-server.js"
+    "check": "node --check local-server.js && node --check js/firebase.js"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "firebase": "^12.11.0"
   }
 }

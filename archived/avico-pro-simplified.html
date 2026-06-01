@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVICO-PRO - Application Simplifiée</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            flex: 1;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .status-card h3 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 15px 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
+            min-width: 250px;
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        .toast.success {
+            border-left: 4px solid #28a745;
+        }
+
+        .toast.error {
+            border-left: 4px solid #dc3545;
+        }
+
+        .data-list {
+            margin-top: 20px;
+        }
+
+        .data-item {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🐔 AVICO-PRO - Application Simplifiée</h1>
+            <p>Système de gestion avicole moderne et fonctionnel</p>
+        </div>
+
+        <!-- Status Cards -->
+        <div class="status">
+            <div class="status-card">
+                <h3 id="firebase-status">🔥 Firebase</h3>
+                <p id="firebase-text">Vérification...</p>
+            </div>
+            <div class="status-card">
+                <h3 id="auth-status">👤 Auth</h3>
+                <p id="auth-text">Non connecté</p>
+            </div>
+            <div class="status-card">
+                <h3 id="data-status">📊 Données</h3>
+                <p id="data-text">0 enregistrements</p>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="buttons">
+            <button class="btn" onclick="openModal('employee')">👥 Ajouter Employé</button>
+            <button class="btn" onclick="openModal('client')">👤 Ajouter Client</button>
+            <button class="btn" onclick="openModal('product')">📦 Ajouter Produit</button>
+            <button class="btn" onclick="openModal('sale')">💰 Ajouter Vente</button>
+            <button class="btn" onclick="loadData()">🔄 Charger Données</button>
+            <button class="btn" onclick="testConnection()">🧪 Test Connexion</button>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content">
+            <h2>📊 Données Récentes</h2>
+            <div id="data-container">
+                <div class="loading">Cliquez sur "Charger Données" pour afficher les informations</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Ajouter un élément</h3>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div id="modal-body">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span id="toast-icon">✅</span>
+        <span id="toast-message">Message</span>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDTSsajA7ClPXnYBERAeTD8ZVNSgrlil-w",
+            authDomain: "samci-avicole.firebaseapp.com",
+            projectId: "samci-avicole",
+            storageBucket: "samci-avicole.firebasestorage.app",   
+            messagingSenderId: "453007633274",
+            appId: "1:453007633274:web:2c2812f95854c3c0c9c4c3",
+            measurementId: "G-1JY3JHD1T7"
+        };
+
+        // Initialiser Firebase
+        let db, auth;
+        
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            auth = firebase.auth();
+            console.log('✅ Firebase initialisé');
+            updateStatus('firebase', 'Connecté', 'success');
+        } catch (error) {
+            console.error('❌ Erreur Firebase:', error);
+            updateStatus('firebase', 'Erreur', 'error');
+        }
+
+        // API simplifiée
+        const AVICO = {
+            async write(collection, data) {
+                try {
+                    const result = await db.collection(collection).add({
+                        ...data,
+                        createdAt: new Date().toISOString()
+                    });
+                    console.log(`✅ Écriture ${collection}:`, result.id);
+                    return { success: true, id: result.id };
+                } catch (error) {
+                    console.error(`❌ Erreur écriture ${collection}:`, error);
+                    return { success: false, error: error.message };
+                }
+            },
+
+            async read(collection) {
+                try {
+                    const snapshot = await db.collection(collection).get();
+                    const data = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    console.log(`✅ Lecture ${collection}:`, data.length, 'documents');
+                    return { success: true, data };
+                } catch (error) {
+                    console.error(`❌ Erreur lecture ${collection}:`, error);
+                    return { success: false, error: error.message };
+                }
+            }
+        };
+
+        // Fonctions UI
+        function updateStatus(type, text, status = 'info') {
+            const textEl = document.getElementById(`${type}-text`);
+            const cardEl = document.getElementById(`${type}-status`);
+            
+            if (textEl) textEl.textContent = text;
+            
+            if (cardEl) {
+                const colors = {
+                    success: '#28a745',
+                    error: '#dc3545',
+                    info: '#667eea'
+                };
+                cardEl.style.color = colors[status] || colors.info;
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            const msg = document.getElementById('toast-message');
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️'
+            };
+            
+            icon.textContent = icons[type] || icons.success;
+            msg.textContent = message;
+            toast.className = `toast show ${type}`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function openModal(type) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+            
+            const forms = {
+                employee: {
+                    title: '👥 Ajouter un Employé',
+                    body: `
+                        <div class="form-group">
+                            <label>Nom</label>
+                            <input type="text" id="emp-name" placeholder="Nom de l'employé">
+                        </div>
+                        <div class="form-group">
+                            <label>Rôle</label>
+                            <select id="emp-role">
+                                <option value="Vendeur">💰 Vendeur</option>
+                                <option value="Gérant">👑 Gérant</option>
+                                <option value="Admin">⚙️ Admin</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="emp-email" placeholder="email@sam-ci.ci">
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                            <button class="btn" onclick="saveEmployee()">Enregistrer</button>
+                        </div>
+                    `
+                },
+                client: {
+                    title: '👤 Ajouter un Client',
+                    body: `
+                        <div class="form-group">
+                            <label>Nom</label>
+                            <input type="text" id="client-name" placeholder="Nom du client">
+                        </div>
+                        <div class="form-group">
+                            <label>Téléphone</label>
+                            <input type="tel" id="client-phone" placeholder="+225 xx xx xx xx xx">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="client-email" placeholder="email@client.ci">
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                            <button class="btn" onclick="saveClient()">Enregistrer</button>
+                        </div>
+                    `
+                },
+                product: {
+                    title: '📦 Ajouter un Produit',
+                    body: `
+                        <div class="form-group">
+                            <label>Nom du produit</label>
+                            <input type="text" id="product-name" placeholder="Poulet, Œufs, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label>Prix (FCFA)</label>
+                            <input type="number" id="product-price" placeholder="2500">
+                        </div>
+                        <div class="form-group">
+                            <label>Stock</label>
+                            <input type="number" id="product-stock" placeholder="100">
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                            <button class="btn" onclick="saveProduct()">Enregistrer</button>
+                        </div>
+                    `
+                },
+                sale: {
+                    title: '💰 Ajouter une Vente',
+                    body: `
+                        <div class="form-group">
+                            <label>Produit</label>
+                            <input type="text" id="sale-product" placeholder="Poulet">
+                        </div>
+                        <div class="form-group">
+                            <label>Quantité</label>
+                            <input type="number" id="sale-quantity" placeholder="5">
+                        </div>
+                        <div class="form-group">
+                            <label>Prix unitaire (FCFA)</label>
+                            <input type="number" id="sale-price" placeholder="2500">
+                        </div>
+                        <div class="form-group">
+                            <label>Client</label>
+                            <input type="text" id="sale-client" placeholder="Nom du client">
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                            <button class="btn" onclick="saveSale()">Enregistrer</button>
+                        </div>
+                    `
+                }
+            };
+            
+            if (forms[type]) {
+                title.textContent = forms[type].title;
+                body.innerHTML = forms[type].body;
+                modal.classList.add('open');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('open');
+        }
+
+        // Fonctions de sauvegarde
+        async function saveEmployee() {
+            const name = document.getElementById('emp-name').value;
+            const role = document.getElementById('emp-role').value;
+            const email = document.getElementById('emp-email').value;
+            
+            if (!name) {
+                showToast('⚠️ Veuillez remplir le nom', 'warning');
+                return;
+            }
+            
+            const result = await AVICO.write('employees', { name, role, email });
+            
+            if (result.success) {
+                showToast('✅ Employé ajouté avec succès', 'success');
+                closeModal();
+                loadData();
+            } else {
+                showToast(`❌ Erreur: ${result.error}`, 'error');
+            }
+        }
+
+        async function saveClient() {
+            const name = document.getElementById('client-name').value;
+            const phone = document.getElementById('client-phone').value;
+            const email = document.getElementById('client-email').value;
+            
+            if (!name) {
+                showToast('⚠️ Veuillez remplir le nom', 'warning');
+                return;
+            }
+            
+            const result = await AVICO.write('clients', { name, phone, email });
+            
+            if (result.success) {
+                showToast('✅ Client ajouté avec succès', 'success');
+                closeModal();
+                loadData();
+            } else {
+                showToast(`❌ Erreur: ${result.error}`, 'error');
+            }
+        }
+
+        async function saveProduct() {
+            const name = document.getElementById('product-name').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const stock = parseInt(document.getElementById('product-stock').value);
+            
+            if (!name || !price) {
+                showToast('⚠️ Veuillez remplir le nom et le prix', 'warning');
+                return;
+            }
+            
+            const result = await AVICO.write('products', { name, price, stock });
+            
+            if (result.success) {
+                showToast('✅ Produit ajouté avec succès', 'success');
+                closeModal();
+                loadData();
+            } else {
+                showToast(`❌ Erreur: ${result.error}`, 'error');
+            }
+        }
+
+        async function saveSale() {
+            const product = document.getElementById('sale-product').value;
+            const quantity = parseInt(document.getElementById('sale-quantity').value);
+            const price = parseFloat(document.getElementById('sale-price').value);
+            const client = document.getElementById('sale-client').value;
+            
+            if (!product || !quantity || !price) {
+                showToast('⚠️ Veuillez remplir tous les champs obligatoires', 'warning');
+                return;
+            }
+            
+            const result = await AVICO.write('sales', {
+                product,
+                quantity,
+                price,
+                total: quantity * price,
+                client,
+                date: new Date().toISOString()
+            });
+            
+            if (result.success) {
+                showToast('✅ Vente enregistrée avec succès', 'success');
+                closeModal();
+                loadData();
+            } else {
+                showToast(`❌ Erreur: ${result.error}`, 'error');
+            }
+        }
+
+        async function loadData() {
+            const container = document.getElementById('data-container');
+            container.innerHTML = '<div class="loading">Chargement des données...</div>';
+            
+            try {
+                const collections = ['employees', 'clients', 'products', 'sales'];
+                let allData = [];
+                let totalCount = 0;
+                
+                for (const collection of collections) {
+                    const result = await AVICO.read(collection);
+                    if (result.success) {
+                        result.data.forEach(item => {
+                            allData.push({
+                                ...item,
+                                collection: collection,
+                                displayName: `${collection}: ${item.name || item.product || 'N/A'}`
+                            });
+                        });
+                        totalCount += result.data.length;
+                    }
+                }
+                
+                updateStatus('data', `${totalCount} enregistrements`, 'success');
+                
+                if (allData.length === 0) {
+                    container.innerHTML = '<div class="loading">Aucune donnée trouvée. Ajoutez des éléments pour commencer !</div>';
+                } else {
+                    container.innerHTML = '<div class="data-list">' + 
+                        allData.slice(-10).reverse().map(item => `
+                            <div class="data-item">
+                                <div>
+                                    <strong>${item.displayName}</strong>
+                                    <br><small>${new Date(item.createdAt).toLocaleString()}</small>
+                                </div>
+                                <span>${item.collection}</span>
+                            </div>
+                        `).join('') + 
+                    '</div>';
+                }
+                
+            } catch (error) {
+                console.error('❌ Erreur chargement:', error);
+                container.innerHTML = '<div class="loading">Erreur lors du chargement des données</div>';
+                updateStatus('data', 'Erreur', 'error');
+            }
+        }
+
+        async function testConnection() {
+            showToast('🧪 Test de connexion en cours...', 'info');
+            
+            try {
+                const result = await AVICO.write('_test', { 
+                    message: 'Test connexion AVICO-PRO',
+                    timestamp: new Date().toISOString()
+                });
+                
+                if (result.success) {
+                    showToast('✅ Connexion Firebase réussie !', 'success');
+                    updateStatus('firebase', 'Testé avec succès', 'success');
+                } else {
+                    showToast(`❌ Erreur connexion: ${result.error}`, 'error');
+                    updateStatus('firebase', 'Échec', 'error');
+                }
+            } catch (error) {
+                showToast('❌ Erreur de connexion', 'error');
+                updateStatus('firebase', 'Échec', 'error');
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 AVICO-PRO Simplifié - Initialisation...');
+            
+            // Test automatique de connexion
+            setTimeout(() => {
+                testConnection();
+                loadData();
+            }, 1000);
+            
+            console.log('✅ Application prête !');
+        });
+
+        // Fermer la modale en cliquant à l'extérieur
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

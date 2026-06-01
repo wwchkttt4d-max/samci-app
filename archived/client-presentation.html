@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AVICO-PRO - Présentation Client</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --green-dark: #024e02;
+      --green: #2E7D32;
+      --green-light: #66BB6A;
+      --green-pale: #E8F5E9;
+      --gold: #F9A825;
+      --gold-light: #FFF8E1;
+      --blue: #1565C0;
+      --blue-light: #E3F2FD;
+      --text: #1a2e1a;
+      --text-light: #4a6741;
+      --white: #ffffff;
+      --shadow: 0 4px 20px rgba(0,0,0,0.1);
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--green-pale) 0%, var(--white) 100%);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 30px;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .logo-icon {
+      font-size: 48px;
+      background: var(--green);
+      color: var(--white);
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-text h1 {
+      color: var(--green-dark);
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .logo-text p {
+      color: var(--text-light);
+      font-size: 16px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: var(--text-light);
+      margin-top: 20px;
+    }
+
+    /* Navigation */
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav-tab {
+      background: var(--white);
+      border: 2px solid var(--green-pale);
+      padding: 12px 24px;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .nav-tab:hover {
+      border-color: var(--green);
+      background: var(--green-pale);
+    }
+
+    .nav-tab.active {
+      background: var(--green);
+      color: var(--white);
+      border-color: var(--green);
+    }
+
+    /* Sections */
+    .section {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 30px;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+    }
+
+    .card h2 {
+      color: var(--green-dark);
+      font-size: 28px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card h3 {
+      color: var(--green);
+      font-size: 20px;
+      margin: 20px 0 15px;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .feature-card {
+      background: var(--green-pale);
+      padding: 20px;
+      border-radius: var(--radius);
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    .feature-title {
+      font-weight: 600;
+      color: var(--green-dark);
+      margin-bottom: 10px;
+    }
+
+    .feature-desc {
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    /* Benefits */
+    .benefits-list {
+      list-style: none;
+      margin-top: 20px;
+    }
+
+    .benefits-list li {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+      padding: 15px;
+      background: var(--green-pale);
+      border-radius: var(--radius);
+    }
+
+    .benefit-icon {
+      font-size: 24px;
+      color: var(--green);
+    }
+
+    /* Demo Section */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .demo-card {
+      background: var(--white);
+      border: 2px solid var(--green-pale);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .demo-card:hover {
+      border-color: var(--green);
+      transform: translateY(-3px);
+    }
+
+    .demo-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .demo-title {
+      font-weight: 600;
+      color: var(--green-dark);
+      margin-bottom: 8px;
+    }
+
+    .demo-desc {
+      color: var(--text-light);
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    /* Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 30px;
+    }
+
+    .pricing-card {
+      background: var(--white);
+      border: 2px solid var(--green-pale);
+      border-radius: var(--radius);
+      padding: 30px;
+      text-align: center;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .pricing-card.featured {
+      border-color: var(--green);
+      transform: scale(1.05);
+    }
+
+    .pricing-card:hover {
+      border-color: var(--green);
+      transform: translateY(-5px);
+    }
+
+    .pricing-card.featured:hover {
+      transform: scale(1.05) translateY(-5px);
+    }
+
+    .plan-name {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 10px;
+    }
+
+    .plan-price {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .plan-features {
+      list-style: none;
+      margin-bottom: 25px;
+    }
+
+    .plan-features li {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--green-pale);
+      color: var(--text-light);
+    }
+
+    .plan-features li:last-child {
+      border-bottom: none;
+    }
+
+    /* Contact */
+    .contact-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
+      background: var(--green-pale);
+      border-radius: var(--radius);
+    }
+
+    .contact-icon {
+      font-size: 24px;
+      color: var(--green);
+    }
+
+    .contact-text h4 {
+      color: var(--green-dark);
+      margin-bottom: 5px;
+    }
+
+    .contact-text p {
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    /* CTA Buttons */
+    .cta-button {
+      background: var(--green);
+      color: var(--white);
+      padding: 15px 30px;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 20px;
+    }
+
+    .cta-button:hover {
+      background: var(--green-dark);
+      transform: translateY(-2px);
+    }
+
+    .cta-button.secondary {
+      background: var(--gold);
+      color: var(--white);
+    }
+
+    .cta-button.secondary:hover {
+      background: #e68900;
+    }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .stat-card {
+      background: var(--white);
+      padding: 25px;
+      border-radius: var(--radius);
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--green-dark);
+      color: var(--white);
+      padding: 30px;
+      border-radius: var(--radius);
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .footer p {
+      margin-bottom: 15px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--white);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      opacity: 1;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+
+      .header {
+        padding: 20px;
+      }
+
+      .logo-text h1 {
+        font-size: 28px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .card h2 {
+        font-size: 24px;
+      }
+
+      .nav-tabs {
+        justify-content: center;
+      }
+
+      .nav-tab {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+
+      .pricing-card.featured {
+        transform: scale(1);
+      }
+    }
+
+    /* Loading Animation */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .spinner {
+      border: 3px solid var(--green-pale);
+      border-top: 3px solid var(--green);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">🥚</div>
+        <div class="logo-text">
+          <h1>AVICO-PRO</h1>
+          <p>Gestion Avicole Moderne</p>
+        </div>
+      </div>
+      <p class="subtitle">La solution complète pour la gestion moderne de votre entreprise avicole</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-tabs">
+      <div class="nav-tab active" onclick="showSection('overview')">🏠 Présentation</div>
+      <div class="nav-tab" onclick="showSection('features')">✨ Fonctionnalités</div>
+      <div class="nav-tab" onclick="showSection('demo')">🖥️ Démo</div>
+      <div class="nav-tab" onclick="showSection('benefits')">💰 Bénéfices</div>
+      <div class="nav-tab" onclick="showSection('pricing')">📋 Tarifs</div>
+      <div class="nav-tab" onclick="showSection('contact')">📞 Contact</div>
+    </nav>
+
+    <!-- Overview Section -->
+    <section id="overview" class="section active">
+      <div class="card">
+        <h2>🏠 AVICO-PRO - Votre Partenaire de Confiance</h2>
+        <p>AVICO-PRO est une solution de gestion avicole moderne et complète, conçue spécifiquement pour les entreprises avicoles ivoiriennes. Notre plateforme vous aide à optimiser vos opérations, améliorer votre productivité et maximiser vos profits.</p>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Made in Côte d'Ivoire</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Support Client</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Utilisateurs Satisfaits</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">99.9%</div>
+            <div class="stat-label">Uptime Garanti</div>
+          </div>
+        </div>
+
+        <h3>🎯 Notre Mission</h3>
+        <p>Révolutionner la gestion avicole en Côte d'Ivoire grâce à la technologie moderne, en offrant des outils puissants, intuitifs et adaptés aux réalités locales.</p>
+
+        <h3>🌟 Pourquoi AVICO-PRO ?</h3>
+        <ul class="benefits-list">
+          <li>
+            <span class="benefit-icon">🎨</span>
+            <div>
+              <strong>Interface Intuitive</strong>
+              <p>Design moderne et facile à utiliser</p>
+            </div>
+          </li>
+          <li>
+            <span class="benefit-icon">📱</span>
+            <div>
+              <strong>Accessible Partout</strong>
+              <p>Application web responsive pour tous vos appareils</p>
+            </div>
+          </li>
+          <li>
+            <span class="benefit-icon">🔒</span>
+            <div>
+              <strong>Sécurité Maximale</strong>
+              <p>Vos données protégées avec les meilleures technologies</p>
+            </div>
+          </li>
+          <li>
+            <span class="benefit-icon">📊</span>
+            <div>
+              <strong>Analytics Avancés</strong>
+              <p>Prenez des décisions basées sur des données réelles</p>
+            </div>
+          </li>
+        </ul>
+
+        <div style="text-align: center; margin-top: 30px;">
+          <a href="https://samci-avicole.web.app" class="cta-button" target="_blank">🚀 Essayer Gratuitement</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+      <div class="card">
+        <h2>✨ Fonctionnalités Complètes</h2>
+        <p>AVICO-PRO offre toutes les fonctionnalités dont vous avez besoin pour gérer votre entreprise avicole efficacement.</p>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <div class="feature-title">Tableau de Bord</div>
+            <div class="feature-desc">Vue d'ensemble complète avec KPIs en temps réel</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💰</div>
+            <div class="feature-title">Point de Vente</div>
+            <div class="feature-desc">Caisse moderne avec gestion des paiements</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">👥</div>
+            <div class="feature-title">Gestion d'Équipe</div>
+            <div class="feature-desc">Suivi des employés et des performances</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📦</div>
+            <div class="feature-title">Gestion des Stocks</div>
+            <div class="feature-desc">Inventaire intelligent avec alertes automatiques</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💼</div>
+            <div class="feature-title">Ventes & Commandes</div>
+            <div class="feature-desc">Suivi complet des ventes et des commandes clients</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">👤</div>
+            <div class="feature-title">Gestion des Clients</div>
+            <div class="feature-desc">Base de données clients avec historique</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🚛</div>
+            <div class="feature-title">Livraisons</div>
+            <div class="feature-desc">Suivi des livraisons et des livreurs</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <div class="feature-title">Comptabilité</div>
+            <div class="feature-desc">Gestion financière et rapports</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📋</div>
+            <div class="feature-title">Rapports</div>
+            <div class="feature-desc">Rapports détaillés et analytics</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔔</div>
+            <div class="feature-title">Notifications</div>
+            <div class="feature-desc">Alertes et rappels automatiques</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚙️</div>
+            <div class="feature-title">Paramètres</div>
+            <div class="feature-desc">Configuration personnalisée</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="section">
+      <div class="card">
+        <h2>🖥️ Découvrez AVICO-PRO en Action</h2>
+        <p>Explorez notre plateforme et découvrez comment elle peut transformer votre entreprise.</p>
+        
+        <div class="demo-grid">
+          <div class="demo-card">
+            <div class="demo-icon">📊</div>
+            <div class="demo-title">Dashboard</div>
+            <div class="demo-desc">Tableau de bord intuitif avec toutes vos métriques</div>
+            <a href="https://samci-avicole.web.app" class="cta-button" target="_blank">Voir Démo</a>
+          </div>
+          <div class="demo-card">
+            <div class="demo-icon">💰</div>
+            <div class="demo-title">Point de Vente</div>
+            <div class="demo-desc">Caisse moderne et facile à utiliser</div>
+            <a href="https://samci-avicole.web.app" class="cta-button" target="_blank">Essayer POS</a>
+          </div>
+          <div class="demo-card">
+            <div class="demo-icon">📦</div>
+            <div class="demo-title">Gestion Stocks</div>
+            <div class="demo-desc">Inventaire intelligent en temps réel</div>
+            <a href="https://samci-avicole.web.app" class="cta-button" target="_blank">Explorer</a>
+          </div>
+          <div class="demo-card">
+            <div class="demo-icon">👥</div>
+            <div class="demo-title">Équipe</div>
+            <div class="demo-desc">Gestion complète des employés</div>
+            <a href="https://samci-avicole.web.app" class="cta-button" target="_blank">Découvrir</a>
+          </div>
+          <div class="demo-card">
+            <div class="demo-icon">📈</div>
+            <div class="demo-title">Rapports</div>
+            <div class="demo-desc">Analytics et rapports détaillés</div>
+            <a href="https://samci-avicole.web.app" class="cta-button" target="_blank">Analyser</a>
+          </div>
+          <div class="demo-card">
+            <div class="demo-icon">⚙️</div>
+            <div class="demo-title">Paramètres</div>
+            <div class="demo-desc">Configuration personnalisée</div>
+            <a href="https://samci-avicole.web.app" class="cta-button" target="_blank">Configurer</a>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+          <h3>🚀 Prêt à transformer votre entreprise ?</h3>
+          <p>Essayez AVICO-PRO gratuitement et découvrez la différence</p>
+          <a href="https://samci-avicole.web.app" class="cta-button" target="_blank">Commencer l'Essai Gratuit</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="section">
+      <div class="card">
+        <h2>💰 Les Bénéfices AVICO-PRO</h2>
+        <p>AVICO-PRO vous aide à économiser du temps, réduire les coûts et augmenter vos profits.</p>
+        
+        <h3>💵 Économies Financières</h3>
+        <ul class="benefits-list">
+          <li>
+            <span class="benefit-icon">📉</span>
+            <div>
+              <strong>Réduction des coûts opérationnels</strong>
+              <p>Économisez jusqu'à 30% sur vos frais de gestion</p>
+            </div>
+          </li>
+          <li>
+            <span class="benefit-icon">🎯</span>
+            <div>
+              <strong>Optimisation des stocks</strong>
+              <p>Réduisez le gaspillage et améliorez votre trésorerie</p>
+            </div>
+          </li>
+          <li>
+            <span class="benefit-icon">⚡</span>
+            <div>
+              <strong>Automatisation des tâches</strong>
+              <p>Gagnez jusqu'à 20 heures par semaine</p>
+            </div>
+          </li>
+        </ul>
+
+        <h3>📈 Augmentation des Revenus</h3>
+        <ul class="benefits-list">
+          <li>
+            <span class="benefit-icon">📊</span>
+            <div>
+              <strong>Meilleure prise de décision</strong>
+              <p>Analytics en temps réel pour des décisions éclairées</p>
+            </div>
+          </li>
+          <li>
+            <span class="benefit-icon">👥</span>
+            <div>
+              <strong>Fidélisation client</strong>
+              <p>Suivi client pour augmenter les ventes répétées</p>
+            </div>
+          </li>
+          <li>
+            <span class="benefit-icon">🚀</span>
+            <div>
+              <strong>Croissance accélérée</strong>
+              <p>Outils pour scaler votre entreprise efficacement</p>
+            </div>
+          </li>
+        </ul>
+
+        <h3>🛡️ Sécurité et Conformité</h3>
+        <ul class="benefits-list">
+          <li>
+            <span class="benefit-icon">🔒</span>
+            <div>
+              <strong>Données sécurisées</strong>
+              <p>Vos informations protégées 24/7</p>
+            </div>
+          </li>
+          <li>
+            <span class="benefit-icon">📋</span>
+            <div>
+              <strong>Conformité locale</strong>
+              <p>Adapté aux réglementations ivoiriennes</p>
+            </div>
+          </li>
+          <li>
+            <span class="benefit-icon">💾</span>
+            <div>
+              <strong>Sauvegarde automatique</strong>
+              <p>Vos données en sécurité dans le cloud</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="section">
+      <div class="card">
+        <h2>📋 Tarifs Simples et Transparents</h2>
+        <p>Des tarifs adaptés à la taille de votre entreprise, sans frais cachés.</p>
+        
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <div class="plan-name">Starter</div>
+            <div class="plan-price">25,000 FCFA</div>
+            <div class="plan-price">/mois</div>
+            <ul class="plan-features">
+              <li>✅ Jusqu'à 3 utilisateurs</li>
+              <li>✅ Gestion des stocks</li>
+              <li>✅ Point de vente</li>
+              <li>✅ Rapports de base</li>
+              <li>✅ Support email</li>
+            </ul>
+            <button class="cta-button">Commencer</button>
+          </div>
+          
+          <div class="pricing-card featured">
+            <div class="plan-name">Professional</div>
+            <div class="plan-price">50,000 FCFA</div>
+            <div class="plan-price">/mois</div>
+            <ul class="plan-features">
+              <li>✅ Jusqu'à 10 utilisateurs</li>
+              <li>✅ Toutes les fonctionnalités Starter</li>
+              <li>✅ Analytics avancés</li>
+              <li>✅ Gestion d'équipe</li>
+              <li>✅ Livraisons</li>
+              <li>✅ Support prioritaire</li>
+            </ul>
+            <button class="cta-button">Choisir ce plan</button>
+          </div>
+          
+          <div class="pricing-card">
+            <div class="plan-name">Enterprise</div>
+            <div class="plan-price">Sur Mesure</div>
+            <div class="plan-price"></div>
+            <ul class="plan-features">
+              <li>✅ Utilisateurs illimités</li>
+              <li>✅ Toutes les fonctionnalités</li>
+              <li>✅ Personnalisation</li>
+              <li>✅ Intégrations API</li>
+              <li>✅ Formation dédiée</li>
+              <li>✅ Support 24/7</li>
+            </ul>
+            <button class="cta-button secondary">Nous contacter</button>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+          <p>🎉 <strong>Essai gratuit de 14 jours</strong> - Aucune carte de crédit requise</p>
+          <a href="https://samci-avicole.web.app" class="cta-button" target="_blank">🚀 Commencer l'Essai Gratuit</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+      <div class="card">
+        <h2>📞 Parlons de Votre Projet</h2>
+        <p>Nous sommes là pour vous aider à transformer votre entreprise avicole. Contactez-nous dès aujourd'hui.</p>
+        
+        <div class="contact-info">
+          <div class="contact-item">
+            <span class="contact-icon">📱</span>
+            <div class="contact-text">
+              <h4>Téléphone</h4>
+              <p>+225 07 00 00 00 00</p>
+            </div>
+          </div>
+          
+          <div class="contact-item">
+            <span class="contact-icon">📧</span>
+            <div class="contact-text">
+              <h4>Email</h4>
+              <p>contact@sam-ci.ci</p>
+            </div>
+          </div>
+          
+          <div class="contact-item">
+            <span class="contact-icon">📍</span>
+            <div class="contact-text">
+              <h4>Adresse</h4>
+              <p>Abidjan, Côte d'Ivoire</p>
+            </div>
+          </div>
+          
+          <div class="contact-item">
+            <span class="contact-icon">🕐</span>
+            <div class="contact-text">
+              <h4>Disponibilité</h4>
+              <p>Lun-Ven: 8h-18h, Sam: 9h-14h</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+          <h3>🚀 Prêt à commencer ?</h3>
+          <p>Demandez une démo personnalisée ou commencez votre essai gratuit</p>
+          <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="https://samci-avicole.web.app" class="cta-button" target="_blank">🚀 Essai Gratuit</a>
+            <a href="mailto:contact@sam-ci.ci" class="cta-button secondary">📅 Demander une Démo</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>© 2024 AVICO-PRO - Société Avicole Moderne de Côte d'Ivoire</p>
+      <p>Tous droits réservés | Made with ❤️ in Côte d'Ivoire</p>
+      <div class="footer-links">
+        <a href="https://samci-avicole.web.app" target="_blank">🚀 Essayer AVICO-PRO</a>
+        <a href="mailto:contact@sam-ci.ci">📧 Nous contacter</a>
+        <a href="tel:+2250700000000">📱 Appeler</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Navigation functionality
+    function showSection(sectionId) {
+      // Hide all sections
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(section => {
+        section.classList.remove('active');
+      });
+      
+      // Remove active class from all tabs
+      const tabs = document.querySelectorAll('.nav-tab');
+      tabs.forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Show selected section
+      const targetSection = document.getElementById(sectionId);
+      if (targetSection) {
+        targetSection.classList.add('active');
+      }
+      
+      // Add active class to clicked tab
+      event.target.classList.add('active');
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // Add loading animation for demo links
+    document.querySelectorAll('.cta-button').forEach(button => {
+      if (button.href && button.href.includes('samci-avicole.web.app')) {
+        button.addEventListener('click', function(e) {
+          if (!this.href.includes('mailto') && !this.href.includes('tel')) {
+            // Add loading state
+            const originalText = this.innerHTML;
+            this.innerHTML = '<div class="spinner"></div> Chargement...';
+            this.disabled = true;
+            
+            // Restore after 2 seconds
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.disabled = false;
+            }, 2000);
+          }
+        });
+      }
+    });
+
+    // Track page views (simple analytics)
+    let pageViews = 0;
+    function trackPageView() {
+      pageViews++;
+      console.log(`Page view #${pageViews}`);
+      
+      // You can send this to your analytics service
+      // analytics.track('page_view', { section: getCurrentSection() });
+    }
+
+    function getCurrentSection() {
+      const activeSection = document.querySelector('.section.active');
+      return activeSection ? activeSection.id : 'unknown';
+    }
+
+    // Track initial page view
+    trackPageView();
+
+    // Track section changes
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        setTimeout(trackPageView, 100);
+      });
+    });
+
+    // Add some interactive effects
+    document.querySelectorAll('.feature-card, .demo-card, .pricing-card').forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-8px) scale(1.02)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+
+    // Auto-rotate testimonials (if added later)
+    let currentTestimonial = 0;
+    function rotateTestimonials() {
+      // Implementation for rotating testimonials if needed
+    }
+
+    // Initialize
+    console.log('🚀 AVICO-PRO Presentation Page Loaded Successfully');
+    console.log('📊 Ready for client presentation');
+  </script>
+</body>
+</html>

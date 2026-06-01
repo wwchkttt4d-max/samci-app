@@ -34,10 +34,10 @@ function sanitizeInput(str) {
 ────────────────────────────────────────────────────────────── */
 
 // Vérifier si UI est déjà défini (conflit avec node_modules)
-if (typeof window.UI !== 'undefined') {
-  console.warn('⚠️ UI déjà défini, utilisation de la version existante');
+if (typeof window.UI !== 'undefined' && window.UI.initialized) {
+  console.warn('⚠️ UI déjà défini et initialisé, utilisation de la version existante');
 } else {
-  // Déclarer UI seulement si non défini
+  // Déclarer UI seulement si non défini ou non initialisé
   const UI = {
     currentPage : 'dashboard',
     currentUser : null,
@@ -84,11 +84,12 @@ if (typeof window.UI !== 'undefined') {
     },
 
     // État de l'application
-    initialized: false,
+    initialized: true,
   };
 
   // Exposer UI globalement pour éviter les conflits
   window.UI = UI;
+  console.log('✅ UI initialisé avec succès');
 }
 
 /* ──────────────────────────────────────────────────────────────
@@ -117,6 +118,12 @@ function initLoginListeners() {
     pwd.addEventListener('keydown', e => {
       if (e.key === 'Enter') doLogin();
     });
+  }
+
+  // Bind the login button click event
+  const loginBtn = document.querySelector('.login-btn');
+  if (loginBtn) {
+    loginBtn.addEventListener('click', doLogin);
   }
 }
 

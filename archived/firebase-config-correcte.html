@@ -1,0 +1,144 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════════
+   AVICO-PRO - CONFIGURATION FIREBASE CORRIGÉE
+   Remplacez l'ancienne configuration Firebase dans index.html par celle-ci
+   ═══════════════════════════════════════════════════════════════════════════════ -->
+
+<!-- Firebase SDK - VERSION COMPAT UNIQUEMENT (SANS CONFLITS) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
+
+<!-- Configuration Firebase CORRIGÉE -->
+<script>
+// Configuration Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyDTSsajA7ClPXnYBERAeTD8ZVNSgrlil-w",
+  authDomain: "samci-avicole.firebaseapp.com",
+  projectId: "samci-avicole",
+  storageBucket: "samci-avicole.firebasestorage.app",   
+  messagingSenderId: "453007633274",
+  appId: "1:453007633274:web:2c2812f95854c3c0c9c4c3",
+  measurementId: "G-1JY3JHD1T7"
+};
+
+// Initialiser Firebase UNE SEULE FOIS
+if (!window.firebaseApp) {
+  window.firebaseApp = firebase.initializeApp(firebaseConfig);
+  window.db = firebase.firestore();
+  window.auth = firebase.auth();
+  window.analytics = firebase.analytics();
+  
+  console.log('✅ Firebase initialisé avec succès');
+  console.log('📊 Projet:', window.firebaseApp.options.projectId);
+}
+
+// Fonctions globales pour l'application
+window.AVICODB = {
+  // Écrire des données
+  async write(collection, data) {
+    try {
+      const result = await window.db.collection(collection).add({
+        ...data,
+        timestamp: new Date().toISOString(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      console.log('✅ Données écrites:', result.id);
+      return result;
+    } catch (error) {
+      console.error('❌ Erreur écriture:', error);
+      throw error;
+    }
+  },
+  
+  // Lire des données
+  async read(collection, limit = 10) {
+    try {
+      const snapshot = await window.db.collection(collection)
+        .orderBy('createdAt', 'desc')
+        .limit(limit)
+        .get();
+      
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      console.log('✅ Données lues:', data.length, 'documents');
+      return data;
+    } catch (error) {
+      console.error('❌ Erreur lecture:', error);
+      throw error;
+    }
+  },
+  
+  // Mettre à jour des données
+  async update(collection, docId, data) {
+    try {
+      const result = await window.db.collection(collection).doc(docId).update({
+        ...data,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      console.log('✅ Données mises à jour:', docId);
+      return result;
+    } catch (error) {
+      console.error('❌ Erreur mise à jour:', error);
+      throw error;
+    }
+  },
+  
+  // Supprimer des données
+  async delete(collection, docId) {
+    try {
+      await window.db.collection(collection).doc(docId).delete();
+      console.log('✅ Données supprimées:', docId);
+      return true;
+    } catch (error) {
+      console.error('❌ Erreur suppression:', error);
+      throw error;
+    }
+  },
+  
+  // Authentification
+  async signIn(email, password) {
+    try {
+      const result = await window.auth.signInWithEmailAndPassword(email, password);
+      console.log('✅ Connecté:', result.user.email);
+      return result.user;
+    } catch (error) {
+      console.error('❌ Erreur connexion:', error);
+      throw error;
+    }
+  },
+  
+  async signUp(email, password) {
+    try {
+      const result = await window.auth.createUserWithEmailAndPassword(email, password);
+      console.log('✅ Compte créé:', result.user.email);
+      return result.user;
+    } catch (error) {
+      console.error('❌ Erreur création compte:', error);
+      throw error;
+    }
+  },
+  
+  async signOut() {
+    try {
+      await window.auth.signOut();
+      console.log('✅ Déconnecté');
+      return true;
+    } catch (error) {
+      console.error('❌ Erreur déconnexion:', error);
+      throw error;
+    }
+  },
+  
+  // Écouter l'état de connexion
+  onAuthChange(callback) {
+    return window.auth.onAuthStateChanged(callback);
+  }
+};
+
+console.log('🔥 AVICO-PRO Base de données prête !');
+console.log('💡 Utilisez: AVICODB.write(), AVICODB.read(), AVICODB.signIn()');
+</script>

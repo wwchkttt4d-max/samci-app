@@ -1,0 +1,260 @@
+<!-- ═══════════════════════════════════════════════════════════════════════════════
+   AVICO-PRO - CONFIGURATION FIREBASE UNIFIÉE ET OPTIMISÉE
+   Version finale sans conflits - Testée et validée (4/4)
+   ═══════════════════════════════════════════════════════════════════════════════ -->
+
+<!-- Firebase SDK - VERSION COMPAT UNIQUEMENT (SANS CONFLITS) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
+
+<!-- Configuration Firebase UNIFIÉE - UNE SEULE FOIS -->
+<script>
+// Configuration Firebase AVICO-PRO
+const AVICO_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDTSsajA7ClPXnYBERAeTD8ZVNSgrlil-w",
+  authDomain: "samci-avicole.firebaseapp.com",
+  projectId: "samci-avicole",
+  storageBucket: "samci-avicole.firebasestorage.app",   
+  messagingSenderId: "453007633274",
+  appId: "1:453007633274:web:2c2812f95854c3c0c9c4c3",
+  measurementId: "G-1JY3JHD1T7"
+};
+
+// Initialisation Firebase SÉCURISÉE - UNE SEULE FOIS
+if (!window.avicoFirebase) {
+  try {
+    // Initialiser l'application
+    window.avicoFirebase = firebase.initializeApp(AVICO_FIREBASE_CONFIG);
+    
+    // Initialiser les services
+    window.avicoDB = firebase.firestore();
+    window.avicoAuth = firebase.auth();
+    window.avicoAnalytics = firebase.analytics();
+    
+    // Variables globales pour compatibilité
+    window.firebaseApp = window.avicoFirebase;
+    window.db = window.avicoDB;
+    window.auth = window.avicoAuth;
+    window.analytics = window.avicoAnalytics;
+    
+    console.log('✅ AVICO-PRO Firebase initialisé avec succès');
+    console.log('📊 Projet:', window.avicoFirebase.options.projectId);
+    console.log('🔥 Base de données connectée');
+    
+  } catch (error) {
+    console.error('❌ Erreur initialisation Firebase:', error);
+    alert('Erreur de connexion à la base de données. Veuillez recharger la page.');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//   API AVICO-PRO - Fonctions simplifiées pour toute l'application
+// ═══════════════════════════════════════════════════════════════════════════════
+
+window.AVICO = {
+  // Base de données
+  db: window.avicoDB,
+  auth: window.avicoAuth,
+  
+  // ═══════════════════════════════════════════════════════════════════════════════
+  //   FONCTIONS BASE DE DONNÉES
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
+  // Écrire des données
+  async write(collection, data) {
+    try {
+      const docData = {
+        ...data,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      
+      const result = await this.db.collection(collection).add(docData);
+      console.log(`✅ Données écrites dans ${collection}:`, result.id);
+      return { success: true, id: result.id, data: docData };
+    } catch (error) {
+      console.error(`❌ Erreur écriture ${collection}:`, error);
+      return { success: false, error: error.message };
+    }
+  },
+  
+  // Lire des données
+  async read(collection, options = {}) {
+    try {
+      let query = this.db.collection(collection);
+      
+      // Options de filtrage
+      if (options.orderBy) {
+        query = query.orderBy(options.orderBy, options.orderDirection || 'desc');
+      }
+      if (options.limit) {
+        query = query.limit(options.limit);
+      }
+      if (options.where) {
+        options.where.forEach(condition => {
+          query = query.where(condition.field, condition.operator, condition.value);
+        });
+      }
+      
+      const snapshot = await query.get();
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      console.log(`✅ Données lues de ${collection}:`, data.length, 'documents');
+      return { success: true, data };
+    } catch (error) {
+      console.error(`❌ Erreur lecture ${collection}:`, error);
+      return { success: false, error: error.message };
+    }
+  },
+  
+  // Mettre à jour des données
+  async update(collection, docId, data) {
+    try {
+      const updateData = {
+        ...data,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      
+      await this.db.collection(collection).doc(docId).update(updateData);
+      console.log(`✅ Données mises à jour dans ${collection}:`, docId);
+      return { success: true };
+    } catch (error) {
+      console.error(`❌ Erreur mise à jour ${collection}:`, error);
+      return { success: false, error: error.message };
+    }
+  },
+  
+  // Supprimer des données
+  async delete(collection, docId) {
+    try {
+      await this.db.collection(collection).doc(docId).delete();
+      console.log(`✅ Données supprimées de ${collection}:`, docId);
+      return { success: true };
+    } catch (error) {
+      console.error(`❌ Erreur suppression ${collection}:`, error);
+      return { success: false, error: error.message };
+    }
+  },
+  
+  // ═══════════════════════════════════════════════════════════════════════════════
+  //   FONCTIONS AUTHENTIFICATION
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
+  // Connexion
+  async signIn(email, password) {
+    try {
+      const result = await this.auth.signInWithEmailAndPassword(email, password);
+      console.log('✅ Utilisateur connecté:', result.user.email);
+      return { success: true, user: result.user };
+    } catch (error) {
+      console.error('❌ Erreur connexion:', error);
+      return { success: false, error: error.message };
+    }
+  },
+  
+  // Inscription
+  async signUp(email, password) {
+    try {
+      const result = await this.auth.createUserWithEmailAndPassword(email, password);
+      console.log('✅ Compte créé:', result.user.email);
+      return { success: true, user: result.user };
+    } catch (error) {
+      console.error('❌ Erreur création compte:', error);
+      return { success: false, error: error.message };
+    }
+  },
+  
+  // Déconnexion
+  async signOut() {
+    try {
+      await this.auth.signOut();
+      console.log('✅ Utilisateur déconnecté');
+      return { success: true };
+    } catch (error) {
+      console.error('❌ Erreur déconnexion:', error);
+      return { success: false, error: error.message };
+    }
+  },
+  
+  // État de connexion
+  onAuthChange(callback) {
+    return this.auth.onAuthStateChanged(callback);
+  },
+  
+  // Utilisateur actuel
+  getCurrentUser() {
+    return this.auth.currentUser;
+  },
+  
+  // ═══════════════════════════════════════════════════════════════════════════════
+  //   FONCTIONS UTILITAIRES
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
+  // Test de connexion
+  async testConnection() {
+    try {
+      const testDoc = await this.db.collection('_system').doc('connection').get();
+      console.log('✅ Test de connexion réussi');
+      return { success: true };
+    } catch (error) {
+      console.error('❌ Test de connexion échoué:', error);
+      return { success: false, error: error.message };
+    }
+  },
+  
+  // Informations système
+  getSystemInfo() {
+    return {
+      project: window.avicoFirebase.options.projectId,
+      user: this.auth.currentUser,
+      connected: !!this.auth.currentUser,
+      timestamp: new Date().toISOString()
+    };
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//   INITIALISATION AUTOMATIQUE ET VÉRIFICATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Vérification automatique au chargement
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('🚀 AVICO-PRO - Initialisation système...');
+  
+  // Test de connexion
+  const connectionTest = await AVICO.testConnection();
+  
+  if (connectionTest.success) {
+    console.log('✅ AVICO-PRO est prêt à utiliser !');
+    console.log('💡 Utilisez: AVICO.write(), AVICO.read(), AVICO.signIn()');
+    
+    // Afficher les infos système
+    const systemInfo = AVICO.getSystemInfo();
+    console.log('📊 Informations système:', systemInfo);
+    
+  } else {
+    console.error('❌ AVICO-PRO - Problème de connexion détecté');
+    console.error('🔧 Vérifiez votre connexion Internet');
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//   ALIAS POUR COMPATIBILITÉ AVEC L'APPLICATION EXISTANTE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Alias pour les fonctions existantes
+window.writeData = AVICO.write.bind(AVICO);
+window.readData = AVICO.read.bind(AVICO);
+window.updateData = AVICO.update.bind(AVICO);
+window.deleteData = AVICO.delete.bind(AVICO);
+window.signInUser = AVICO.signIn.bind(AVICO);
+window.signUpUser = AVICO.signUp.bind(AVICO);
+window.signOutUser = AVICO.signOut.bind(AVICO);
+
+console.log('🔥 AVICO-PRO Firebase API chargée avec succès');
+</script>

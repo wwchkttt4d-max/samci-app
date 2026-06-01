@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#075f46">
+  <link rel="manifest" href="/manifest.json">
   <title>AVICO-PRO - Gestion avicole</title>
   <style>
     :root {
@@ -461,13 +463,370 @@
       th, td { padding: 10px 9px; font-size: 13px; }
       .bar-row { grid-template-columns: 1fr; }
     }
+
+    body.modern-theme {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --panel-2: #eef4f7;
+      --ink: #17202a;
+      --muted: #64717d;
+      --line: #dfe8ee;
+      --green: #16835f;
+      --green-dark: #075f46;
+      --gold: #d98920;
+      --red: #cf3f4c;
+      --blue: #2f66d0;
+      --shadow: 0 18px 50px rgba(24, 40, 58, .10);
+      background:
+        radial-gradient(circle at top left, rgba(22, 131, 95, .10), transparent 34rem),
+        linear-gradient(180deg, #f8fbfd 0%, var(--bg) 42%);
+    }
+
+    body.dark-mode {
+      --bg: #101418;
+      --panel: #171d22;
+      --panel-2: #202b31;
+      --ink: #eef4f1;
+      --muted: #a4b2b0;
+      --line: #29363c;
+      --green: #39b98b;
+      --green-dark: #52d3a4;
+      --gold: #f0b75a;
+      --red: #ff6b78;
+      --blue: #78a7ff;
+      --shadow: 0 18px 48px rgba(0, 0, 0, .35);
+      background:
+        radial-gradient(circle at top left, rgba(57, 185, 139, .12), transparent 34rem),
+        #101418;
+    }
+
+    body.dark-mode input,
+    body.dark-mode select,
+    body.dark-mode .ghost,
+    body.dark-mode .soft-btn,
+    body.dark-mode .modal {
+      background: var(--panel-2);
+      color: var(--ink);
+    }
+
+    body.modern-theme .login {
+      background:
+        linear-gradient(125deg, rgba(7, 95, 70, .88), rgba(47, 102, 208, .58)),
+        url("https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=1600&q=80") center/cover;
+    }
+
+    body.modern-theme .login-card {
+      border-radius: 18px;
+      box-shadow: 0 28px 70px rgba(6, 33, 27, .28);
+      backdrop-filter: blur(18px);
+    }
+
+    body.modern-theme .app {
+      grid-template-columns: 268px minmax(0, 1fr);
+    }
+
+    body.modern-theme .sidebar {
+      background:
+        linear-gradient(180deg, rgba(7, 95, 70, .98), rgba(20, 37, 46, .98)),
+        #102f12;
+      border-right: 1px solid rgba(255, 255, 255, .10);
+    }
+
+    .brand-mark,
+    .side-logo {
+      font-weight: 950;
+      letter-spacing: .02em;
+    }
+
+    body.modern-theme .nav {
+      gap: 6px;
+    }
+
+    body.modern-theme .nav button {
+      min-height: 44px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+    }
+
+    body.modern-theme .nav button.active,
+    body.modern-theme .nav button:hover {
+      background: rgba(255,255,255,.15);
+      border-color: rgba(255,255,255,.14);
+    }
+
+    .nav-icon {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .12);
+      font-size: 11px;
+      letter-spacing: 0;
+      flex: 0 0 auto;
+    }
+
+    body.modern-theme .main {
+      padding: 24px;
+    }
+
+    body.modern-theme .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      margin: -24px -24px 20px;
+      padding: 18px 24px;
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .global-search {
+      width: min(340px, 38vw);
+      min-width: 220px;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+    }
+
+    .hero-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .hero-card {
+      padding: 22px;
+      background:
+        linear-gradient(135deg, rgba(7, 95, 70, .95), rgba(47, 102, 208, .80)),
+        var(--green-dark);
+      color: white;
+      border: 0;
+    }
+
+    .hero-card .eyebrow {
+      margin: 0 0 10px;
+      color: rgba(255,255,255,.76);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .hero-card h3 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 38px);
+      letter-spacing: 0;
+      line-height: 1.05;
+    }
+
+    .hero-card p {
+      max-width: 720px;
+      margin: 12px 0 0;
+      color: rgba(255,255,255,.82);
+      line-height: 1.55;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .hero-actions .mini-btn {
+      background: white;
+      color: #075f46;
+    }
+
+    .hero-actions .soft-btn {
+      background: rgba(255,255,255,.16);
+      color: white;
+      border: 1px solid rgba(255,255,255,.22);
+    }
+
+    .ops-card {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .ops-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+    }
+
+    .ops-line span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .ops-line strong {
+      text-align: right;
+    }
+
+    body.modern-theme .card {
+      border-radius: 8px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    body.modern-theme .card:hover {
+      border-color: color-mix(in srgb, var(--green) 38%, var(--line));
+      box-shadow: 0 20px 54px rgba(24, 40, 58, .13);
+    }
+
+    body.modern-theme .kpi {
+      position: relative;
+      overflow: hidden;
+    }
+
+    body.modern-theme .kpi::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 4px;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+    }
+
+    .insight-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .insight {
+      display: grid;
+      gap: 4px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+    }
+
+    .insight strong {
+      font-size: 14px;
+    }
+
+    .insight span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .quick-card {
+      min-height: 76px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--ink);
+      text-align: left;
+      font-weight: 900;
+    }
+
+    .quick-card span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .command-panel {
+      position: fixed;
+      top: 78px;
+      right: 24px;
+      z-index: 30;
+      width: min(440px, calc(100vw - 32px));
+      max-height: min(560px, calc(100vh - 108px));
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .command-panel h3 {
+      margin: 0;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      font-size: 15px;
+    }
+
+    .command-item {
+      display: block;
+      width: 100%;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      text-align: left;
+    }
+
+    .command-item strong,
+    .command-item span {
+      display: block;
+    }
+
+    .command-item span {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .command-item:hover {
+      background: var(--panel-2);
+    }
+
+    @media (max-width: 980px) {
+      body.modern-theme .app { grid-template-columns: 1fr; }
+      body.modern-theme .topbar { position: static; margin: 0 0 18px; padding: 0; border: 0; background: transparent; }
+      .hero-panel { grid-template-columns: 1fr; }
+      .quick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .global-search { width: 100%; }
+    }
+
+    @media (max-width: 640px) {
+      body.modern-theme .main { padding: 14px; }
+      .topbar-row, .tools { width: 100%; }
+      .icon-btn { width: 40px; }
+      .quick-grid { grid-template-columns: 1fr; }
+      .hero-card { padding: 18px; }
+      .command-panel { top: 12px; right: 12px; left: 12px; width: auto; }
+    }
   </style>
 </head>
-<body>
+<body class="modern-theme">
   <section class="login" id="loginPage">
     <div class="login-card">
       <div class="brand">
-        <div class="brand-mark">🥚</div>
+        <div class="brand-mark">AP</div>
         <div>
           <h1>AVICO-PRO</h1>
           <p>Gestion avicole rapide, claire et fiable</p>
@@ -490,16 +849,16 @@
   <section class="app hidden" id="app">
     <aside class="sidebar">
       <div class="side-brand">
-        <div class="side-logo">🥚</div>
+        <div class="side-logo">AP</div>
         <div><strong>AVICO-PRO</strong><span>SAM-CI</span></div>
       </div>
       <nav class="nav" id="nav">
-        <button class="active" data-page="dashboard">📊 Tableau</button>
-        <button data-page="caisse">💰 Caisse</button>
-        <button data-page="stocks">📦 Stocks</button>
-        <button data-page="clients">👥 Clients</button>
-        <button data-page="rapports">📈 Rapports</button>
-        <button data-page="parametres">⚙️ Parametres</button>
+        <button class="active" data-page="dashboard"><span class="nav-icon">TB</span> Tableau</button>
+        <button data-page="caisse"><span class="nav-icon">CA</span> Caisse</button>
+        <button data-page="stocks"><span class="nav-icon">ST</span> Stocks</button>
+        <button data-page="clients"><span class="nav-icon">CL</span> Clients</button>
+        <button data-page="rapports"><span class="nav-icon">RA</span> Rapports</button>
+        <button data-page="parametres"><span class="nav-icon">PA</span> Parametres</button>
       </nav>
     </aside>
 
@@ -509,13 +868,42 @@
           <small id="today"></small>
           <h2 id="pageTitle">Tableau de bord</h2>
         </div>
-        <div class="tools">
-          <button class="ghost" id="quickSaleButton">Vente rapide</button>
-          <button class="ghost" id="logoutButton">Deconnexion</button>
+        <div class="topbar-row">
+          <input class="global-search" id="globalSearch" placeholder="Rechercher client, produit, vente...">
+          <div class="tools">
+            <button class="ghost" id="quickSaleButton">Vente rapide</button>
+            <button class="ghost icon-btn" id="themeToggle" title="Changer de theme">L</button>
+            <button class="ghost" id="logoutButton">Deconnexion</button>
+          </div>
         </div>
       </div>
 
       <section class="page" id="page-dashboard">
+        <div class="hero-panel">
+          <div class="card hero-card">
+            <p class="eyebrow">Pilotage temps reel</p>
+            <h3 id="heroHeadline">Votre exploitation est prete.</h3>
+            <p id="heroCopy">Suivez les ventes, les stocks, les clients et les alertes depuis une interface unique, rapide et exploitable.</p>
+            <div class="hero-actions">
+              <button class="mini-btn" data-go="caisse">Nouvelle vente</button>
+              <button class="mini-btn soft-btn" data-go="stocks">Controler le stock</button>
+              <button class="mini-btn soft-btn" id="exportCsv">Exporter CSV</button>
+            </div>
+          </div>
+          <div class="card card-pad ops-card">
+            <div class="ops-line"><span>Sante stock</span><strong id="opsStockHealth">-</strong></div>
+            <div class="ops-line"><span>Derniere vente</span><strong id="opsLastSale">-</strong></div>
+            <div class="ops-line"><span>Meilleur client</span><strong id="opsBestClient">-</strong></div>
+          </div>
+        </div>
+
+        <div class="quick-grid" style="margin-bottom:16px">
+          <button class="quick-card" data-go="caisse">Encaisser<span>Creer une vente en quelques secondes</span></button>
+          <button class="quick-card" data-go="stocks">Inventaire<span>Filtrer, alerter, reapprovisionner</span></button>
+          <button class="quick-card" data-go="clients">Clients<span>Ajouter et suivre le chiffre d'affaires</span></button>
+          <button class="quick-card" data-go="rapports">Analyser<span>Voir les produits et clients forts</span></button>
+        </div>
+
         <div class="grid kpis">
           <div class="card card-pad kpi"><div class="label">CA total</div><div class="value" id="kpiRevenue">0</div><div class="note ok">ventes validees</div></div>
           <div class="card card-pad kpi"><div class="label">Marge estimee</div><div class="value" id="kpiMargin">0</div><div class="note">base 32%</div></div>
@@ -538,6 +926,17 @@
           <div class="card card-pad kpi"><div class="label">Clients</div><div class="value" id="kpiClients">0</div><div class="note">actifs</div></div>
           <div class="card card-pad kpi"><div class="label">Produits</div><div class="value" id="kpiProducts">0</div><div class="note">en catalogue</div></div>
           <div class="card card-pad kpi"><div class="label">Panier moyen</div><div class="value" id="kpiAverage">0</div><div class="note">par vente</div></div>
+        </div>
+
+        <div class="grid two" style="margin-top:16px">
+          <div class="card">
+            <div class="card-head"><div class="card-title">Insights automatiques</div></div>
+            <div class="card-pad insight-list" id="smartInsights"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">Alertes stock</div><button class="mini-btn soft-btn" id="restockDashboard">Reapprovisionner</button></div>
+            <div class="card-pad insight-list" id="stockAlerts"></div>
+          </div>
         </div>
       </section>
 
@@ -649,12 +1048,26 @@
               <p class="muted" id="storageInfo" style="line-height:1.6;margin:0"></p>
             </div>
           </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">Mises a jour</div></div>
+            <div class="card-pad">
+              <p class="muted" id="updateInfo" style="line-height:1.6;margin-top:0">Initialisation des mises a jour...</p>
+              <div class="actions">
+                <button class="mini-btn" id="checkUpdates">Verifier maintenant</button>
+                <button class="mini-btn soft-btn hidden" id="installUpdate">Installer la mise a jour</button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>
   </section>
 
   <div id="toast" class="toast hidden"></div>
+  <div class="command-panel hidden" id="commandPanel">
+    <h3>Resultats rapides</h3>
+    <div id="commandResults"></div>
+  </div>
 
   <div class="modal-backdrop hidden" id="modalBackdrop">
     <div class="modal">
@@ -667,6 +1080,7 @@
   </div>
 
   <script>
+    const APP_VERSION = '4.1.0';
     const STORAGE_KEY = 'avico_pro_light_v2';
     const AUTH_USERS = [
       { email: 'admin@avico-pro.ci', password: 'admin123' },
@@ -699,6 +1113,7 @@
 
     let data = loadData();
     let currentPage = 'dashboard';
+    let waitingServiceWorker = null;
 
     function clone(value) {
       return JSON.parse(JSON.stringify(value));
@@ -706,21 +1121,23 @@
 
     function loadData() {
       try {
-        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        const parsed = JSON.parse(storageGet(STORAGE_KEY));
         return normalizeData(parsed || clone(defaultData));
       } catch {
         return normalizeData(clone(defaultData));
       }
     }
 
-    function normalizeData(source) {
+    function normalizeData(source = {}) {
+      source = source && typeof source === 'object' ? source : {};
       const normalized = {
         products: Array.isArray(source.products) ? source.products : clone(defaultData.products),
         clients: Array.isArray(source.clients) ? source.clients : clone(defaultData.clients),
         sales: Array.isArray(source.sales) ? source.sales : clone(defaultData.sales)
       };
       normalized.products.forEach((p, index) => {
-        p.id = Number(p.id || Date.now() + index);
+        p.id = toPositiveNumber(p.id, Date.now() + index);
+        p.name = String(p.name || `Produit ${index + 1}`).trim();
         p.stock = Number(p.stock || 0);
         p.threshold = Number(p.threshold || 0);
         p.price = Number(p.price || 0);
@@ -728,23 +1145,48 @@
         p.category = p.category || 'Autre';
       });
       normalized.clients.forEach((c, index) => {
-        c.id = Number(c.id || Date.now() + index);
+        c.id = toPositiveNumber(c.id, Date.now() + index);
+        c.name = String(c.name || `Client ${index + 1}`).trim();
+        c.type = c.type || 'Particulier';
+        c.phone = c.phone || '';
         c.ca = Number(c.ca || 0);
       });
       normalized.sales.forEach((s, index) => {
-        s.id = Number(s.id || Date.now() + index);
+        s.id = toPositiveNumber(s.id, Date.now() + index);
         s.clientId = Number(s.clientId);
         s.productId = Number(s.productId);
         s.qty = Number(s.qty || 1);
         s.total = Number(s.total || 0);
         s.date = s.date || new Date().toISOString();
       });
+      normalized.sales = normalized.sales.filter(s => Number.isFinite(s.clientId) && Number.isFinite(s.productId));
       return normalized;
     }
 
+    function toPositiveNumber(value, fallback) {
+      const number = Number(value);
+      return Number.isFinite(number) && number > 0 ? number : fallback;
+    }
+
     function saveData() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      storageSet(STORAGE_KEY, JSON.stringify(data));
       renderStorageInfo();
+    }
+
+    function storageGet(key) {
+      try {
+        return localStorage.getItem(key);
+      } catch {
+        return null;
+      }
+    }
+
+    function storageSet(key, value) {
+      try {
+        localStorage.setItem(key, value);
+      } catch {
+        showToast('Stockage local indisponible dans ce navigateur');
+      }
     }
 
     function money(value) {
@@ -775,22 +1217,27 @@
         showToast('Identifiant ou mot de passe incorrect');
         return;
       }
-      sessionStorage.setItem('avico_session', 'ok');
+      sessionSet('avico_session', 'ok');
       document.getElementById('loginPage').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
       renderAll();
     }
 
     function logout() {
-      sessionStorage.removeItem('avico_session');
+      sessionRemove('avico_session');
       document.getElementById('app').classList.add('hidden');
       document.getElementById('loginPage').classList.remove('hidden');
     }
 
     function navigate(page) {
+      const targetPage = document.getElementById('page-' + page);
+      if (!targetPage) {
+        showToast('Page introuvable');
+        return;
+      }
       currentPage = page;
       document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
-      document.getElementById('page-' + page).classList.remove('hidden');
+      targetPage.classList.remove('hidden');
       document.querySelectorAll('#nav button').forEach(btn => btn.classList.toggle('active', btn.dataset.page === page));
       document.getElementById('pageTitle').textContent = {
         dashboard: 'Tableau de bord',
@@ -799,7 +1246,7 @@
         clients: 'Clients',
         rapports: 'Rapports',
         parametres: 'Parametres'
-      }[page];
+      }[page] || 'AVICO-PRO';
       renderAll();
     }
 
@@ -811,6 +1258,7 @@
       renderReports();
       fillSelects();
       renderStorageInfo();
+      renderUpdateInfo();
     }
 
     function renderDashboard() {
@@ -818,6 +1266,8 @@
       const stockValue = data.products.reduce((sum, p) => sum + (p.stock * p.price), 0);
       const alerts = data.products.filter(p => p.stock <= p.threshold).length;
       const average = data.sales.length ? revenue / data.sales.length : 0;
+      const bestClient = data.clients.slice().sort((a, b) => b.ca - a.ca)[0];
+      const lastSale = data.sales[data.sales.length - 1];
 
       document.getElementById('kpiRevenue').textContent = money(revenue);
       document.getElementById('kpiMargin').textContent = money(revenue * .32);
@@ -826,6 +1276,13 @@
       document.getElementById('kpiClients').textContent = data.clients.length;
       document.getElementById('kpiProducts').textContent = data.products.length;
       document.getElementById('kpiAverage').textContent = money(average);
+      document.getElementById('heroHeadline').textContent = alerts ? `${alerts} stock(s) a surveiller.` : 'Votre exploitation est prete.';
+      document.getElementById('heroCopy').textContent = alerts
+        ? 'Priorisez les reapprovisionnements avant les prochaines ventes et gardez la caisse fluide.'
+        : 'Les indicateurs sont stables. Vous pouvez continuer les ventes, enrichir le stock et suivre les meilleurs clients.';
+      document.getElementById('opsStockHealth').textContent = alerts ? `${alerts} alerte(s)` : 'Stable';
+      document.getElementById('opsLastSale').textContent = lastSale ? `${formatDate(lastSale.date)} - ${money(lastSale.total)}` : 'Aucune';
+      document.getElementById('opsBestClient').textContent = bestClient ? bestClient.name : '-';
 
       document.getElementById('recentSales').innerHTML = data.sales.slice(-7).reverse().map(sale => {
         const client = clientById(sale.clientId);
@@ -834,6 +1291,40 @@
       }).join('') || emptyRow(4, 'Aucune vente.');
 
       renderBars('salesBars', totalsByCategory());
+      renderSmartInsights(revenue, average, alerts, bestClient);
+      renderStockAlerts();
+    }
+
+    function renderSmartInsights(revenue, average, alerts, bestClient) {
+      const topProduct = Object.entries(totalsByProduct()).sort((a, b) => b[1] - a[1])[0];
+      const insights = [
+        {
+          title: revenue ? `CA consolide: ${money(revenue)}` : 'Pret pour la premiere vente',
+          copy: revenue ? `Panier moyen actuel: ${money(average)}.` : 'Ajoutez une vente depuis la caisse pour activer les rapports.'
+        },
+        {
+          title: topProduct ? `Produit moteur: ${topProduct[0]}` : 'Catalogue disponible',
+          copy: topProduct ? `${money(topProduct[1])} de chiffre d'affaires genere.` : `${data.products.length} produits prets a vendre.`
+        },
+        {
+          title: bestClient ? `Client prioritaire: ${bestClient.name}` : 'Base clients a enrichir',
+          copy: bestClient ? `${money(bestClient.ca)} de CA cumule.` : 'Ajoutez vos clients reguliers pour suivre leur performance.'
+        },
+        {
+          title: alerts ? 'Action recommandee: stock' : 'Aucune urgence stock',
+          copy: alerts ? 'Filtrez les alertes dans Stocks ou utilisez le reapprovisionnement automatique.' : 'Les seuils critiques sont sous controle.'
+        }
+      ];
+      document.getElementById('smartInsights').innerHTML = insights.map(item => (
+        `<div class="insight"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.copy)}</span></div>`
+      )).join('');
+    }
+
+    function renderStockAlerts() {
+      const lowProducts = data.products.filter(p => p.stock <= p.threshold);
+      document.getElementById('stockAlerts').innerHTML = lowProducts.map(p => (
+        `<div class="insight"><strong>${escapeHtml(p.name)}</strong><span>${p.stock} ${escapeHtml(p.unit)} restants. Seuil: ${p.threshold}. Prix: ${money(p.price)}.</span></div>`
+      )).join('') || '<div class="insight"><strong>Stock sain</strong><span>Aucun produit sous son seuil critique.</span></div>';
     }
 
     function renderStocks() {
@@ -872,7 +1363,10 @@
       const product = productById(productId);
       const client = clientById(clientId);
 
-      if (!product || !client) return;
+      if (!product || !client) {
+        showToast('Ajoutez au moins un client et un produit');
+        return;
+      }
       if (product.stock < qty) {
         showToast('Stock insuffisant');
         return;
@@ -1132,9 +1626,185 @@
       showToast('Donnees reinitialisees');
     }
 
+    function exportCsvData() {
+      const rows = [
+        ['type', 'date', 'client', 'produit', 'quantite', 'total'],
+        ...data.sales.map(sale => {
+          const client = clientById(sale.clientId);
+          const product = productById(sale.productId);
+          return ['vente', formatDate(sale.date), client?.name || '', product?.name || '', sale.qty, sale.total];
+        })
+      ];
+      const csv = rows.map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'avico-pro-ventes.csv';
+      link.click();
+      URL.revokeObjectURL(url);
+      showToast('Export CSV pret');
+    }
+
+    function applyTheme(theme) {
+      const dark = theme === 'dark';
+      document.body.classList.toggle('dark-mode', dark);
+      document.getElementById('themeToggle').textContent = dark ? 'D' : 'L';
+      document.getElementById('themeToggle').title = dark ? 'Theme sombre actif' : 'Theme clair actif';
+      storageSet('avico_theme', theme);
+    }
+
+    function sessionGet(key) {
+      try {
+        return sessionStorage.getItem(key);
+      } catch {
+        return null;
+      }
+    }
+
+    function sessionSet(key, value) {
+      try {
+        sessionStorage.setItem(key, value);
+      } catch {
+        // Session persistence is optional; the app can still run.
+      }
+    }
+
+    function sessionRemove(key) {
+      try {
+        sessionStorage.removeItem(key);
+      } catch {
+        // ignore
+      }
+    }
+
+    function toggleTheme() {
+      applyTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
+    }
+
+    function globalSearch(query) {
+      const panel = document.getElementById('commandPanel');
+      const results = document.getElementById('commandResults');
+      const term = query.trim().toLowerCase();
+      if (!term) {
+        panel.classList.add('hidden');
+        results.innerHTML = '';
+        return;
+      }
+
+      const matches = [];
+      data.products.forEach(p => {
+        if (`${p.name} ${p.category} ${p.stock}`.toLowerCase().includes(term)) {
+          matches.push({ page: 'stocks', title: p.name, meta: `Stock ${p.stock} ${p.unit} - ${money(p.price)}` });
+        }
+      });
+      data.clients.forEach(c => {
+        if (`${c.name} ${c.type} ${c.phone} ${c.ca}`.toLowerCase().includes(term)) {
+          matches.push({ page: 'clients', title: c.name, meta: `${c.type} - ${money(c.ca)}` });
+        }
+      });
+      data.sales.forEach(sale => {
+        const client = clientById(sale.clientId);
+        const product = productById(sale.productId);
+        const haystack = `${client?.name || ''} ${product?.name || ''} ${sale.total} ${formatDate(sale.date)}`.toLowerCase();
+        if (haystack.includes(term)) {
+          matches.push({ page: 'caisse', title: `${client?.name || 'Client'} - ${money(sale.total)}`, meta: `${product?.name || 'Produit'} le ${formatDate(sale.date)}` });
+        }
+      });
+
+      results.innerHTML = matches.slice(0, 9).map(item => (
+        `<button class="command-item" data-command-page="${item.page}"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.meta)}</span></button>`
+      )).join('') || '<p class="empty">Aucun resultat.</p>';
+      panel.classList.remove('hidden');
+    }
+
     function renderStorageInfo() {
       const bytes = new Blob([JSON.stringify(data)]).size;
       document.getElementById('storageInfo').textContent = `${data.products.length} produits, ${data.clients.length} clients, ${data.sales.length} ventes. Taille locale: ${(bytes / 1024).toFixed(1)} Ko.`;
+    }
+
+    function renderUpdateInfo(message) {
+      const info = document.getElementById('updateInfo');
+      if (!info) return;
+      const lastCheck = storageGet('avico_last_update_check');
+      const label = lastCheck ? `Derniere verification: ${formatDateTime(lastCheck)}.` : 'Aucune verification manuelle encore.';
+      info.textContent = message || `Version ${APP_VERSION}. Mises a jour automatiques actives. ${label}`;
+    }
+
+    async function registerAppUpdates() {
+      if (!('serviceWorker' in navigator)) {
+        renderUpdateInfo('Mises a jour automatiques non disponibles sur ce navigateur.');
+        return;
+      }
+
+      try {
+        const registration = await navigator.serviceWorker.register('/sw.js');
+        renderUpdateInfo(`Version ${APP_VERSION}. Mises a jour automatiques actives.`);
+
+        if (registration.waiting) {
+          notifyUpdateReady(registration.waiting);
+        }
+
+        registration.addEventListener('updatefound', () => {
+          const worker = registration.installing;
+          if (!worker) return;
+          renderUpdateInfo('Verification en cours...');
+          worker.addEventListener('statechange', () => {
+            if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+              notifyUpdateReady(worker);
+            } else if (worker.state === 'activated') {
+              renderUpdateInfo(`Version ${APP_VERSION}. Application a jour.`);
+            }
+          });
+        });
+
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          window.location.reload();
+        });
+      } catch (error) {
+        console.warn('Service worker indisponible:', error);
+        renderUpdateInfo('Mises a jour automatiques indisponibles pour le moment.');
+      }
+    }
+
+    function notifyUpdateReady(worker) {
+      waitingServiceWorker = worker;
+      document.getElementById('installUpdate')?.classList.remove('hidden');
+      renderUpdateInfo('Nouvelle version prete. Clique sur Installer la mise a jour.');
+      showToast('Nouvelle mise a jour disponible');
+    }
+
+    async function checkForAppUpdates() {
+      storageSet('avico_last_update_check', new Date().toISOString());
+      if (!('serviceWorker' in navigator)) {
+        renderUpdateInfo('Mises a jour non disponibles dans ce navigateur.');
+        return;
+      }
+
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        renderUpdateInfo('Verification en cours...');
+        await registration.update();
+        if (registration.waiting) {
+          notifyUpdateReady(registration.waiting);
+          return;
+        }
+        renderUpdateInfo(`Version ${APP_VERSION}. Application a jour.`);
+        showToast('Application a jour');
+      } catch (error) {
+        console.warn('Verification des mises a jour impossible:', error);
+        renderUpdateInfo('Impossible de verifier les mises a jour maintenant.');
+        showToast('Verification impossible');
+      }
+    }
+
+    function installAppUpdate() {
+      if (!waitingServiceWorker) {
+        showToast('Aucune mise a jour prete');
+        return;
+      }
+      waitingServiceWorker.postMessage({ type: 'SKIP_WAITING' });
+      renderUpdateInfo('Installation de la mise a jour...');
     }
 
     function openModal(title, body) {
@@ -1149,7 +1819,13 @@
     }
 
     function formatDate(value) {
-      return new Date(value).toLocaleDateString('fr-FR');
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString('fr-FR');
+    }
+
+    function formatDateTime(value) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? '-' : date.toLocaleString('fr-FR');
     }
 
     function emptyRow(colspan, text) {
@@ -1173,6 +1849,7 @@
       return escapeHtml(value).replace(/`/g, '&#96;');
     }
 
+    applyTheme(storageGet('avico_theme') || 'light');
     document.getElementById('today').textContent = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     document.getElementById('loginButton').addEventListener('click', login);
     document.getElementById('demoLoginButton').addEventListener('click', () => {
@@ -1183,6 +1860,21 @@
     document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
     document.getElementById('logoutButton').addEventListener('click', logout);
     document.getElementById('quickSaleButton').addEventListener('click', () => navigate('caisse'));
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    document.getElementById('globalSearch').addEventListener('input', e => globalSearch(e.target.value));
+    document.getElementById('globalSearch').addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        e.target.value = '';
+        globalSearch('');
+      }
+    });
+    document.getElementById('commandPanel').addEventListener('click', e => {
+      const page = e.target.closest('[data-command-page]')?.dataset.commandPage;
+      if (!page) return;
+      navigate(page);
+      document.getElementById('globalSearch').value = '';
+      globalSearch('');
+    });
     document.getElementById('nav').addEventListener('click', e => {
       const button = e.target.closest('button[data-page]');
       if (button) navigate(button.dataset.page);
@@ -1206,14 +1898,19 @@
     document.getElementById('addClient').addEventListener('click', addClient);
     document.getElementById('addProduct').addEventListener('click', addProduct);
     document.getElementById('restockButton').addEventListener('click', restock);
+    document.getElementById('restockDashboard').addEventListener('click', restock);
+    document.getElementById('exportCsv').addEventListener('click', exportCsvData);
     document.getElementById('exportData').addEventListener('click', exportData);
     document.getElementById('importButton').addEventListener('click', () => document.getElementById('importData').click());
     document.getElementById('importData').addEventListener('change', e => importData(e.target.files[0]));
     document.getElementById('resetData').addEventListener('click', resetData);
+    document.getElementById('checkUpdates').addEventListener('click', checkForAppUpdates);
+    document.getElementById('installUpdate').addEventListener('click', installAppUpdate);
     document.getElementById('modalClose').addEventListener('click', closeModal);
     document.getElementById('modalBackdrop').addEventListener('click', e => { if (e.target.id === 'modalBackdrop') closeModal(); });
+    registerAppUpdates();
 
-    if (sessionStorage.getItem('avico_session') === 'ok') {
+    if (sessionGet('avico_session') === 'ok') {
       document.getElementById('loginPage').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
       renderAll();

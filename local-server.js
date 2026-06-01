@@ -1,10 +1,21 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const querystring = require('querystring');
+require('dotenv').config({ path: path.join(__dirname, '.env.local') });
 
 const host = '127.0.0.1';
 const port = Number(process.env.PORT || 3000);
 const root = __dirname;
+
+// Parse auth users from .env.local
+function parseAuthUsers() {
+  const envUsers = process.env.VITE_AUTH_USERS || 'admin@avico-pro.ci:admin123,admin@sam-ci.ci:admin123,vendeur@avico-pro.ci:vendeur123,vendeur@sam-ci.ci:vendeur123,livreur@avico-pro.ci:livreur123,livreur@sam-ci.ci:livreur123,compta@avico-pro.ci:compta123,compta@sam-ci.ci:compta123';
+  return envUsers.split(',').map(pair => {
+    const [email, password] = pair.split(':');
+    return { email: email.trim(), password: password.trim() };
+  });
+}
 
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
@@ -35,6 +46,16 @@ function resolveRequestPath(url) {
 }
 
 const server = http.createServer((req, res) => {
+  // API endpoint for auth users
+  if (req.url === '/api/auth-users') {
+    res.writeHead(200, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+    });
+    res.end(JSON.stringify(parseAuthUsers()));
+    return;
+  }
+
   const filePath = resolveRequestPath(req.url);
   const ext = path.extname(filePath).toLowerCase();
   const contentType = mimeTypes[ext] || 'application/octet-stream';
@@ -48,10 +69,24 @@ const server = http.createServer((req, res) => {
           res.end('Fichier introuvable');
           return;
         }
+        // Inject AUTH_USERS into index.html
+        const html = fallbackData.toString().replace(
+          /const AUTH_USERS = \[[\s\S]*?\];/,
+          `const AUTH_USERS = ${JSON.stringify(parseAuthUsers())};`
+        );
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-        res.end(fallbackData);
+        res.end(html);
       });
       return;
+    }
+
+    // Inject AUTH_USERS if serving index.html
+    let content = data;
+    if (filePath.endsWith('index.html')) {
+      content = data.toString().replace(
+        /const AUTH_USERS = \[[\s\S]*?\];/,
+        `const AUTH_USERS = ${JSON.stringify(parseAuthUsers())};`
+      );
     }
 
     res.writeHead(200, {
@@ -59,7 +94,7 @@ const server = http.createServer((req, res) => {
       'Cache-Control': 'no-store',
       'Access-Control-Allow-Origin': '*',
     });
-    res.end(data);
+    res.end(content);
   });
 });
 

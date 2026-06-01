@@ -331,6 +331,7 @@ body {
   z-index: 10000;
   justify-content: center;
   align-items: center;
+  -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
 }
 .emp-modal-overlay.open { display: flex; }

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVICO-PRO - Base de Données Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .btn { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; background: #2E7D32; color: white; }
+        .btn:hover { background: #1B5E20; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 AVICO-PRO - Test Base de Données</h1>
+        
+        <div class="result info">
+            <strong>Configuration Firebase:</strong><br>
+            Projet: samci-avicole<br>
+            Database: Firestore<br>
+            Auth: Firebase Auth
+        </div>
+        
+        <button class="btn" onclick="testConnection()">🔍 Tester Connexion</button>
+        <button class="btn" onclick="testWrite()">📝 Test Écriture</button>
+        <button class="btn" onclick="testRead()">📖 Test Lecture</button>
+        <button class="btn" onclick="testAuth()">🔐 Test Auth</button>
+        <button class="btn" onclick="fullTest()">🚀 Test Complet</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <!-- Firebase SDK - VERSION COMPAT UNIQUEMENT -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDTSsajA7ClPXnYBERAeTD8ZVNSgrlil-w",
+            authDomain: "samci-avicole.firebaseapp.com",
+            projectId: "samci-avicole",
+            storageBucket: "samci-avicole.firebasestorage.app",   
+            messagingSenderId: "453007633274",
+            appId: "1:453007633274:web:2c2812f95854c3c0c9c4c3",
+            measurementId: "G-1JY3JHD1T7"
+        };
+
+        // Initialiser Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        function log(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = `<strong>[${new Date().toLocaleTimeString()}]</strong> ${message}`;
+            results.appendChild(div);
+        }
+
+        async function testConnection() {
+            log('🔍 Test de connexion Firebase...', 'info');
+            
+            try {
+                // Test simple de connexion
+                const testDoc = await db.collection('_connection').doc('test').get();
+                log('✅ Connexion Firebase réussie', 'success');
+                return true;
+            } catch (error) {
+                log(`❌ Erreur connexion: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function testWrite() {
+            log('📝 Test d\'écriture...', 'info');
+            
+            try {
+                await db.collection('test').add({
+                    message: 'Test d\'écriture AVICO-PRO',
+                    timestamp: new Date().toISOString(),
+                    success: true
+                });
+                log('✅ Écriture réussie', 'success');
+                return true;
+            } catch (error) {
+                log(`❌ Erreur écriture: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function testRead() {
+            log('📖 Test de lecture...', 'info');
+            
+            try {
+                const snapshot = await db.collection('test').limit(5).get();
+                log(`✅ Lecture réussie: ${snapshot.size} documents trouvés`, 'success');
+                return true;
+            } catch (error) {
+                log(`❌ Erreur lecture: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function testAuth() {
+            log('🔐 Test authentification...', 'info');
+            
+            try {
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        log(`✅ Utilisateur connecté: ${user.email}`, 'success');
+                    } else {
+                        log('ℹ️ Aucun utilisateur connecté', 'info');
+                    }
+                });
+                
+                // Test connexion anonyme si disponible
+                try {
+                    await auth.signInAnonymously();
+                    log('✅ Authentification anonyme réussie', 'success');
+                } catch (e) {
+                    log('ℹ️ Authentification anonyme non disponible (normal)', 'info');
+                }
+                
+                return true;
+            } catch (error) {
+                log(`❌ Erreur auth: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function fullTest() {
+            log('🚀 Lancement du test complet...', 'info');
+            
+            const results = [];
+            
+            results.push(await testConnection());
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            results.push(await testWrite());
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            results.push(await testRead());
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            results.push(await testAuth());
+            
+            const successCount = results.filter(r => r).length;
+            const totalCount = results.length;
+            
+            if (successCount === totalCount) {
+                log(`🎉 TOUS LES TESTS RÉUSSIS (${successCount}/${totalCount})`, 'success');
+                log('✅ Votre base de données fonctionne parfaitement !', 'success');
+            } else {
+                log(`⚠️ Tests partiels: ${successCount}/${totalCount} réussis`, 'error');
+                log('❌ Votre base de données a des problèmes', 'error');
+            }
+        }
+
+        // Message initial
+        log('🔥 AVICO-PRO - Test base de données prêt', 'info');
+        log('💡 Cliquez sur les boutons pour tester chaque fonctionnalité', 'info');
+    </script>
+</body>
+</html>
