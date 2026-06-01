@@ -822,7 +822,6 @@
     }
   </style>
   <script src="js/firebase.js"></script>
-  <script src="app.js" defer></script>
 </head>
 <body class="modern-theme">
   <section class="login" id="loginPage">
@@ -835,14 +834,13 @@
         </div>
       </div>
       <label for="loginEmail">Identifiant</label>
-      <input id="loginEmail" autocomplete="username" value="admin@avico-pro.ci">
+      <input id="loginEmail" autocomplete="username" placeholder="Entrez votre email">
       <label for="loginPassword">Mot de passe</label>
-      <input id="loginPassword" type="password" autocomplete="current-password" value="admin123">
+      <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Entrez votre mot de passe">
       <button class="primary" id="loginButton">Se connecter</button>
       <button class="primary soft-btn" id="demoLoginButton" style="margin-top:10px;color:var(--green-dark)">Connexion demo</button>
       <div class="hint">
-        Demo: <strong>admin@avico-pro.ci</strong> / <strong>admin123</strong><br>
-        Accepte aussi les anciens comptes: vendeur, livreur, compta.
+        Voir `.env.local` pour les identifiants de test.<br>
         L'application fonctionne meme sans serveur: les donnees restent dans ce navigateur.
       </div>
     </div>
@@ -1855,9 +1853,12 @@
     document.getElementById('today').textContent = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     document.getElementById('loginButton').addEventListener('click', login);
     document.getElementById('demoLoginButton').addEventListener('click', () => {
-      setValue('loginEmail', 'admin@avico-pro.ci');
-      setValue('loginPassword', 'admin123');
-      login();
+      if (AUTH_USERS.length > 0) {
+        const demoUser = AUTH_USERS[0];
+        setValue('loginEmail', demoUser.email);
+        setValue('loginPassword', demoUser.password);
+        login();
+      }
     });
     document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
     document.getElementById('logoutButton').addEventListener('click', logout);

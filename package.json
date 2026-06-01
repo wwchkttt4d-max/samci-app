@@ -1,10 +1,33 @@
 {
+  "name": "avico-pro",
+  "version": "4.1.0",
+  "description": "Application complète de gestion avicole - PWA pour élevages avicoles en Côte d'Ivoire",
+  "author": "AVICO-PRO Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wwchkttt4d-max/samci-app.git"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "scripts": {
     "start": "node local-server.js",
-    "check": "node --check local-server.js && node --check js/firebase.js"
+    "check": "node --check local-server.js && node --check js/firebase.js",
+    "audit": "npm audit"
   },
+  "keywords": [
+    "aviculture",
+    "gestion",
+    "pwa",
+    "cote-d-ivoire",
+    "poules",
+    "oeufs"
+  ],
   "dependencies": {
     "dotenv": "^17.4.2",
     "firebase": "^12.11.0"
   }
 }
+
